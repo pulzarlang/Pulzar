@@ -1,0 +1,5 @@
+Type Console;
+var x = 10;
+var s = pi*2**2
+echo x;
+input s;
