@@ -1,0 +1,3 @@
+Type Console;
+var language = "Flash";
+echo language;
