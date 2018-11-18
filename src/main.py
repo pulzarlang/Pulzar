@@ -4,7 +4,6 @@
 #30/6/18
 import lexer
 import mparser
-import objgen
 
 
 import os
