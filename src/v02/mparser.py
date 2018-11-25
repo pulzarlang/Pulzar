@@ -1,6 +1,7 @@
 from Obj.varObject import VarObject
 from Obj.echoObject import echoObject
 import math
+import os
 
 class Parser(object):
 
@@ -21,8 +22,10 @@ class Parser(object):
             token_type = self.tokens[self.token_index][0]
             # Holds the value of token VAR
             token_value = self.tokens[self.token_index][1]
-            
-            self.parse_type(self.tokens[self.token_index:len(self.tokens)])
+
+            if token_type == "TYPE" and token_value == "Type":          
+                self.parse_type(self.tokens[self.token_index:len(self.tokens)])
+
             #If token is var than add tokens to parse_varialbe()
             if token_type == "VAR" and token_value == "var":
                 self.parse_variable(self.tokens[self.token_index:len(self.tokens)])
@@ -32,14 +35,34 @@ class Parser(object):
             #If token is echo add tokens to parse_input()
             elif token_type == "INPUT":
                 self.parse_input(self.tokens[self.token_index:len(self.tokens)])
+            #If token is echo add tokens to parse_system()         
+            elif token_type == "SYSTEM":
+                self.parse_system(self.tokens[self.token_index:len(self.tokens)])
+            #If token is echo add tokens to parse_include()
+            elif token_type == "INCLUDE":
+                self.parse_include(self.tokens[self.token_index:len(self.tokens)])
 
             self.token_index += 1
 
-        #print(self.transpiled_code)
-        #print("----------------------------------------------------")
-        #print("#"*22,"OUTPUT","#"*22)
+
+        print(self.transpiled_code)
+        print("----------------------------------------------------")
+        print("#"*22,"OUTPUT","#"*22)
 
         exec(self.transpiled_code)
+
+    def parse_include(self,token_stream):
+        tokens_checked = 0
+
+        for token in range(0,len(token_stream)):
+			
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
+
+            if token == 1 and token_value == "tools":
+                tools = True
+        
+
 
     def parse_type(self,token_stream):
 		
@@ -50,7 +73,7 @@ class Parser(object):
             token_type = token_stream[tokens_checked][0]
             token_value = token_stream[tokens_checked][1]
 
-            if token == 1 and token_type == "TP" and token_value != "Type":
+            if token == 1 and token_value != "Type":
                 print("<Error>\nType is missing "+token_value)
                 quit()
                 
@@ -93,18 +116,15 @@ class Parser(object):
                 print("<Error> at line "+self.li+"\nInvalid operator")
                 quit()
             
-            elif token == 3 and token_type in ['INT', 'STR', 'ID']:
+            elif token == 3 and token_type in ['INT', 'STR', 'ID','OP']:
                 value = token_value
-                print("\n")
+
             elif token == 3 and token_type not in ['INT', 'STR', 'ID']:
                 print("<Error> at line ",self.li,":\nInvalid Variable value '"+token_value+"'")
                 quit()
-            elif token == 3 and token_value[1:] == '"':
-                value = token_value
-                value = ("{}".format (token_value1))
             
-            elif token > 3:
-               pass 
+            elif token == 1 and token_type == ["STR"]:
+                value = matcherReturn[0]
 
             tokens_checked+=1
 
@@ -125,16 +145,17 @@ class Parser(object):
 
             if token == 2 and token_type == "SEMIC":break
 
-            if token == 1 and token_value[1:] == '"':
+
+            if token == 1 and token_type == 'STR':
                 value1 = token_value
             else:
                 value1 = token_value
                 
             if token == 1 and token_type == ["INT"]:
                 value1 = token_value
-            
+
             if token == 1 and token_type == ['ROOT'] and token == 2 and token_type == ['INT']:
-                value1 = 'math.',sqrt(token_value)                
+                value1 = 'math.',math.sqrt(token_value)
     
             tokens_checked+=1
 
@@ -144,9 +165,9 @@ class Parser(object):
         self.token_index += tokens_checked
 
     def parse_input(self,token_stream):
+
         tokens_checked = 0
         value1 = ""
-        op = ""
         
         for token in range(0,len(token_stream)):
 
@@ -155,24 +176,37 @@ class Parser(object):
 
             if token == 1 or token > 1 and token_type == "SEMIC":break
             
-            elif token == 1 and token_value == "":
+            elif token == 1 and token_type == "INT":
                 value1 = token_value
-
-            elif token == 1 and not token_value[1:] == '"':
-                value1 = token_value
-            else:
-                value1 = token_value
-            
-            if token == 2 and token_type == "OP":
-                op = token_value
-
-            elif token == 3 and token_type == "INT":
-                value = token_value
-
-                    
+        
             tokens_checked+=1
 
         echoObj = echoObject()
         self.transpiled_code += echoObj.transpile_input(value1)
 
         self.token_index += tokens_checked
+    
+    def parse_system(self,token_stream):
+
+        tokens_checked = 0
+        value = ""
+        
+        for token in range(0,len(token_stream)):
+
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
+
+            if token == 2 and token_type == "SEMIC":break
+             
+            if token == 1 and token_type == 'STR':
+                value = token_value
+            else:
+                value = token_value
+            
+            tokens_checked+=1
+
+        echoObj = echoObject()
+        self.transpiled_code += echoObj.transpile_system(value)
+
+        self.token_index += tokens_checked
+
