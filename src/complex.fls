@@ -1,0 +1,3 @@
+Program Console;
+var x = 1/2;
+complex 1i ** x;

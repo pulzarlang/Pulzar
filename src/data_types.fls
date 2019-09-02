@@ -1,0 +1,6 @@
+Type Console;
+include math;
+var x = 10;
+for x :: x > 10 :: x++ {
+    echo "hello world";
+}
