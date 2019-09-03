@@ -10,7 +10,7 @@
 #### Flash supports both functional & OO programming. It is mostly dynamic language however you can make the code static.
 #### In future Flash will also support low level.
 
-## Example of what flash v0.3:
+## Example of flash v0.3:
 ```flash
   Program Console;
   include math;
