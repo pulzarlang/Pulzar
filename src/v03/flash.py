@@ -5,55 +5,72 @@
 
 import lexer
 import mparser
-import flash_shell.main as shell
+#from flash_shell.main import main as shell
 
 import os
 import sys
 
 li = 0
 #Title
-#os.system("title Flash v0.2")
+os.system("title Flash v0.3")
 
-def main():
+def main(): 
     try:
-        arg1 = sys.argv[1]
-        arg2 = sys.argv[2]
-        if arg1[-4:] != ".fls":
-            print("FileError with file '{}':\nMust be .fls file".format (arg))
-            quit()
-        with open(arg1, "r") as f:
+        arg = sys.argv[1]
+    except:
+        print("Flash shell")
+    
+    if sys.argv[1][-4:] != ".fls":
+        print("FileError with file '{}':\nMust be .fls file".format (sys.argv[1]))
+        quit()
+    try:
+        arg = sys.argv[2]
+    except:
+        with open(sys.argv[1], "r") as f:
+                    code = f.read()
+                    lex = lexer.Lexer(code)
+                    
+                    tokens = lex.token()
+                    #Parser
+                    parse = mparser.Parser(tokens,code,li)
+                            
+                    parse.parse()
+                    quit()
+    if sys.argv[2] == "-t" or sys.argv[2] == "--t":
+        with open(sys.argv[1], "r") as f:
             code = f.read()
-
-        if arg2 == "-t": 
-            print("ORIGINAL CODE:")
-            print(code)
-            #Lexer
-            print("--------------LEXICAL ANALYSYS---------------------\n")
-            lex = lexer.Lexer(code)
-            
-            tokens = lex.token()
-            print(tokens)
-            print("\n--------------------------------------------------")
-            #Parser
-            print("--------------CODE GENERATION-----------------------")
-            parse = mparser.Parser(tokens,code,li)
-            
-            parse.parse()
-
-        else:
-            #Lexer
-            lex = lexer.Lexer(code)
-            
-            tokens = lex.token()
-            #Parser
-            parse = mparser.Parser(tokens,code,li)
-            
-            parse.parse()
+        print("ORIGINAL CODE:")
+        print(code)
+        #Lexer
+        print("--------------LEXICAL ANALYSYS---------------------\n")
+        lex = lexer.Lexer(code)
+                    
+        tokens = lex.token()
+        print(tokens)
+        print("\n--------------------------------------------------")
+        #Parser
+        print("--------------CODE GENERATION-----------------------")
+        parse = mparser.Parser(tokens,code,li)
+        parser = parse.parse()
+        quit()
+    
+    elif sys.argv[2] == "-l" or sys.argv[2] == "--l":
+        with open(sys.argv[1], "r") as f:
+            code = f.read()
+        #Lexer
+        print("--------------LEXICAL ANALYSYS---------------------\n")
+        lex = lexer.Lexer(code)
+                    
+        tokens = lex.token()
+        print(tokens)
+        print("\n--------------------------------------------------")
+        #Parser
+        print("--------------CODE GENERATION-----------------------")
+        parse = mparser.Parser(tokens,code,li)
+        parser = parse.parse()
+        quit()
 #---------------------------------------------------------------------------
-
-    except IndexError:
-        pass
-
 
 if __name__ == "__main__":
     main()
+
