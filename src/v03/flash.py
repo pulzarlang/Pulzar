@@ -5,20 +5,25 @@
 
 import lexer
 import mparser
-#from flash_shell.main import main as shell
+#from flash_shell.main import main
 
 import os
+import platform
 import sys
 
 li = 0
 #Title
-os.system("title Flash v0.3")
+if platform.system() == "Windows":
+    os.system("title Flash v0.3")
+else:
+    pass
+
 
 def main(): 
     try:
         arg = sys.argv[1]
     except:
-        print("Flash shell")
+        pass
     
     if sys.argv[1][-4:] != ".fls":
         print("FileError with file '{}':\nMust be .fls file".format (sys.argv[1]))
@@ -32,7 +37,7 @@ def main():
                     
                     tokens = lex.token()
                     #Parser
-                    parse = mparser.Parser(tokens,code,li)
+                    parse = mparser.Parser(tokens,code,li,False)
                             
                     parse.parse()
                     quit()
@@ -49,9 +54,10 @@ def main():
         print(tokens)
         print("\n--------------------------------------------------")
         #Parser
-        print("--------------CODE GENERATION-----------------------")
-        parse = mparser.Parser(tokens,code,li)
-        parser = parse.parse()
+        print(22*"-" + "PARSER" + 22*"-")
+
+        parse = mparser.Parser(tokens,code,li,True)
+        parse.parse()
         quit()
     
     elif sys.argv[2] == "-l" or sys.argv[2] == "--l":
@@ -65,12 +71,12 @@ def main():
         print(tokens)
         print("\n--------------------------------------------------")
         #Parser
-        print("--------------CODE GENERATION-----------------------")
+
         parse = mparser.Parser(tokens,code,li)
         parser = parse.parse()
+        print("--------------CODE GENERATION-----------------------")
         quit()
 #---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     main()
-
