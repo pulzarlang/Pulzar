@@ -40,3 +40,15 @@
   input b :: str;
   run print_name : b;
 ```
+<div style="background-image: url('./img/black.jpg');width:600px;height:400px;">
+  <code style="color:green;">
+    #flash/plugins/flash1.0.1/main.exe<br></code>
+    <code style="color:#686868;">
+    //My first code</code><br>
+    <code class="code1" style="color:lightblue;">Type</code>
+  <code class="type_console"> Console</code><code class="normal">;
+            <br>
+            <br>
+             echo </code><code class="inq"> "hello world"</code><code class="normal">;                     
+</code>
+          </div>
