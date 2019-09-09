@@ -5,7 +5,7 @@
 </div>
 <br><br>
 
-##### Note that Flash is in early stage of development
+> Note that Flash is in early stage of development
 
 #### Flash supports both functional & OO programming. It is mostly dynamic language however you can make the code static.
 #### In future Flash will also support low level.
