@@ -1,17 +1,17 @@
-<h1 align = 'center'> Flash programming language (v0.3)</h1>
+<h1 align = 'center'> Pulzar programming language (v0.3)</h1>
 
 <div align="center">
-  <strong>Flash is modern high-level programming language written in python</strong>
+  <strong>Pulzar is modern high-level programming language written in python</strong>
 </div>
 <br><br>
 
-> Note that Flash is in early stage of development
+> Note that  is in early stage of development
 
-#### Flash supports both functional & OO programming. It is mostly dynamic language however you can make the code static.
-#### In future Flash will also support low level.
+#### Pulzar supports both functional & OO programming. It is mostly dynamic language however you can make the code static.
+#### In future Pulzar will also support low level.
 
-## Example of flash v0.3:
-```flash
+## Example of Pulzar v0.3:
+```pulzar
   Program Console;
   include math;
  |** This is comment **|
@@ -40,15 +40,3 @@
   input b :: str;
   run print_name : b;
 ```
-<div style="background-image: url('./img/black.jpg');width:600px;height:400px;">
-  <code style="color:green;">
-    #flash/plugins/flash1.0.1/main.exe<br></code>
-    <code style="color:#686868;">
-    //My first code</code><br>
-    <code class="code1" style="color:lightblue;">Type</code>
-  <code class="type_console"> Console</code><code class="normal">;
-            <br>
-            <br>
-             echo </code><code class="inq"> "hello world"</code><code class="normal">;                     
-</code>
-          </div>
