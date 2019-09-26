@@ -61,8 +61,8 @@
 
     class Person : object {
         func @identity : this, name, age {
-            this.name = name
-            this.age = age
+            this.name = name;
+            this.age = age;
         } 
         func print : this {
             echo "Hello" + this.name;
