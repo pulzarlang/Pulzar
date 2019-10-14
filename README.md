@@ -60,8 +60,8 @@ This are feautures what pulzar can do now:
 - [x] While loop
 - [x] Functions 
 - [x] Function calls 
-- [] Math library ( working on it)
-- [-] Imports libaries
+- [ ] Math library ( working on it)
+- [ - ] Imports libaries
 - [ ] Pointers
 - [ ] Macros
 
