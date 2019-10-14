@@ -1,7 +1,7 @@
 <h1 align = 'center'> Pulzar programming language (v0.4)</h1>
 
 <div align="center">
-  <strong>Pulzar is modern high-level programming language written in python</strong>
+  <strong>Pulzar is modern  programming language with both high and low level features written in python</strong>
 </div>
 <br><br>
 
