@@ -10,7 +10,7 @@
 #### Pulzar supports both functional & OO programming. It is mostly dynamic language however you can make the code static.
 #### In future Pulzar will also support low level.
 
-## Example of Pulzar v0.3:
+## Example of Pulzar v0.4:
 ```pulzar
   Program Console;
   include math;
@@ -42,3 +42,26 @@
   str b -> input;
   run print_name : b;
 ```
+### Pulzar v.04 is working mostly on better AST and use of LLVM.
+
+
+## Features
+
+This are feautures what pulzar can do now:
+- [x] printing
+- [x] input
+- [x] Variable declaration 
+- [x] Variable definition
+- [x] Math 
+- [x] If statments
+- [x] Else statments
+- [x] Else if statments
+- [x] For loops
+- [x] While loop
+- [x] Functions 
+- [x] Function calls 
+- [] Math library ( working on it)
+- [-] Imports libaries
+- [ ] Pointers
+- [ ] Macros
+
