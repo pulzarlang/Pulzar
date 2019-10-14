@@ -61,7 +61,7 @@ This are feautures what pulzar can do now:
 - [x] Functions 
 - [x] Function calls 
 - [ ] Math library ( working on it)
-- [ - ] Imports libaries
+- [ ] Imports libaries
 - [ ] Pointers
 - [ ] Macros
 
