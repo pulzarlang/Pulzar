@@ -14,7 +14,7 @@ import sys
 
 #Check Platform
 if platform.system() == "Windows":
-    os.system("title Pulzar v0.3")
+    os.system("title Pulzar v0.4")
 
 elif platform.system() == "linux" or platform.system() == "darwin":
     sys.stdout.write("\x1b]2; Flash v0.3\x07")
@@ -24,10 +24,11 @@ def main():
         arg = sys.argv[1]
     except:
         shell()
-    
+    #If file doesnt have .plz file extension, it will raise an error
     if sys.argv[1][-4:] != ".plz":
         print("FileError with file '{}':\nMust be .plz file".format (sys.argv[1]))
         quit()
+    # Looks for second argument
     try:
         arg = sys.argv[2]
 
