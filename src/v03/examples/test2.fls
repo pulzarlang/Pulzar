@@ -1,0 +1,6 @@
+Program Console;
+include math;
+var a;
+for a :: a < 10 :: a++ {
+    echo "hello world";
+}

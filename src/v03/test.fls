@@ -1,7 +1,7 @@
+Program Console;
 include math;
 factorial 5;
-echo x;
-Type Console;
+
 func circle : r { 
     echo pi * r ** 2;
 }
@@ -9,11 +9,10 @@ func circle : r {
 func print_name : name 
 {
     echo "Hello" + "\s" + name;
-    echo "Yes!!!";
 }
-echo "Enter r:";
+print "Enter r:";
 input a :: int;
 run circle : a;
-echo "Enter name:";
+print "Enter name:";
 input b :: str;
-run print_name : b
+run print_name : b;

@@ -1,0 +1,13 @@
+Program Console;
+macros 
+{
+    redefine @echo : print(_var arg_) {
+	    echo arg;
+    }
+    define int x {
+        x = 10;
+    }
+    
+}
+print("hello world")
+print(x)

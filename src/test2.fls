@@ -1,4 +1,0 @@
-Program Console;
-include math;
-var x = 5!;
-echo x;

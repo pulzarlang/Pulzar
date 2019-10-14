@@ -15,13 +15,14 @@ li = 0
 #Title
 if platform.system() == "Windows":
     os.system("title Flash v0.3")
-else:
-    pass
 
+elif platform.system() == "linux" or platform.system() == "darwin":
+    sys.stdout.write("\x1b]2; Flash v03\x07")
 
 def main(): 
     try:
         arg = sys.argv[1]
+
     except:
         pass
     

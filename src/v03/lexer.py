@@ -8,13 +8,15 @@ class Lexer(object):
     
     def getMatcher(self, matcher, current_index, source_code):
 
-        if source_code[current_index].count('"') == 2:
+        if source_code[current_index].count(matcher) == 2:
 
-            word = source_code[current_index].partition('"')[-1].partition('"'[0])
+            word = source_code[current_index].partition(matcher)[-1].partition(matcher[0])
 
-            if word[2] != '': return [ '"' + word[0] + '"', '', word[2] ]
+            if word[2] != '': 
+                return [ matcher + word[0] + matcher, '', word[2] ]
 
-            else:  return [ '"' + word[0] + '"', '', '' ]
+            else:
+                return [ matcher + word[0] + matcher, '', '' ]
         
         else:
 
@@ -32,8 +34,7 @@ class Lexer(object):
 
                 if matcher in item and iter_count != 1: 
 
-                    return ['"' + word.partition('"')[-1].partition('"'[0])[0] + '"',word.partition('"')[-1].partition('"'[0])[2],iter_count - 1]
-
+                    return [matcher + word.partition(matcher)[-1].partition(matcher[0])[0] + matcher,word.partition(matcher)[-1].partition(matcher[0])[2],iter_count - 1]
                     break
 
 
@@ -54,9 +55,11 @@ class Lexer(object):
             
             elif word == "var":tokens.append(["VAR",word])
             
-            elif word == "Type":tokens.append(["TP",word])
+            elif word == "Program":tokens.append(["PM",word])
             
             elif word == "echo":tokens.append(["ECHO",word])
+
+            elif word == "print":tokens.append(["PRINT",word])
 
             elif word == "input":tokens.append(["INPUT",word])
             
@@ -66,6 +69,10 @@ class Lexer(object):
             
             
             elif word == "if":tokens.append(["IF",word])
+
+            elif word == "elif":tokens.append(["ELSE_IF",word]) 
+
+            elif word == "else":tokens.append(["ELSE",word])          
             
             elif word == "for":tokens.append(["FOR",word])
 
@@ -106,7 +113,9 @@ class Lexer(object):
                 if word[len(word) - 1] == ';':
                     tokens.append(["INT",word[:-1]])
                 elif word[len(word) - 1] == "i":
-                    tokens.append(["COMPLEX_NUM"])
+                    tokens.append(["COMPLEX_NUM",word])
+                elif word[len(word) - 1] == "!":
+                    tokens.append(["FACT",word])
                 else:
                     tokens.append(["INT",word])
             
@@ -117,13 +126,13 @@ class Lexer(object):
                 tokens.append(["COMP_OP", word])
             
             elif word == "::":
-                tokens.append(["COMP",word])
+                tokens.append(["SEPARATOR",word])
             
             elif word[:-2] == "++":
                 tokens.append(["INCREMENT",word])
              
-            elif word in ",":
-                tokens.append(["COMMA"])
+            elif word == ",":
+                tokens.append(["COMMA"],",")
             
             elif word== "|**" or word[:3] == "|**" or word == "**|" or word[:-3] == "**|":
                 tokens.append(["COMMENT",word])
@@ -144,14 +153,31 @@ class Lexer(object):
                     if ';' in matcherReturn[1]: tokens.append(["SEMIC", ";"])
 
                     source_index += matcherReturn[2]
+                    pass
+            
+            elif ("'") in word:
+
+                matcherReturn = self.getMatcher("'", source_index, source_code)
+                
+                if matcherReturn[1] == '': tokens.append(["STR", matcherReturn[0].replace("\s"," ")])
+
+                else:
+
+                    tokens.append(["STR", matcherReturn[0].replace("\s"," ") ])
                     
+                    if ';' in matcherReturn[1]: tokens.append(["SEMIC", ";"])
+
+                    source_index += matcherReturn[2]
                     pass
 
-            if word[len(word) -1]==";":
+            if word[len(word) - 1] == ";":
                 tokens.append(["SEMIC",';'])
             
-            elif word in "()":
+            elif  word[:1] == "(" or  word[len(word) - 1] == ")" or word == "(" or word == ")" or word in "()":
                 tokens.append(["BRACKET",word])
+            
+            elif word.startswith("\t"):
+                tokens.append(["TAB","\t"])
             
             
             source_index += 1

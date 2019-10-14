@@ -1,8 +1,0 @@
-Program Console;
-include math;
-var a;
-var x;
-for a :: a < 10 :: a++ {
-    var x = a + x;
-    echo x;
-} 

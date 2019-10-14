@@ -1,4 +1,4 @@
-<h1 align = 'center'> Pulzar programming language (v0.3)</h1>
+<h1 align = 'center'> Pulzar programming language (v0.4)</h1>
 
 <div align="center">
   <strong>Pulzar is modern high-level programming language written in python</strong>
@@ -15,15 +15,17 @@
   Program Console;
   include math;
  |** This is comment **|
-  factorial 5;
+  int n = 5!;
   var bool = False;
   var x = 10;
+  echo n;
   if x != 10 {
     echo "Not good";
   }
   var i;
-  for i :: i < 10 {
-    x /= x -1
+  for i :: i < 10 :: ++i {
+    x = i ** 2 / (2**i - i);
+    echo x;
   }
   func circle : r { 
       echo pi * r ** 2;
@@ -34,9 +36,9 @@
       echo "Hello" + "\s" + name;
   }
   echo "Enter r:";
-  input a :: int;
+  int a -> input;
   run circle : a;
   echo "Enter name:";
-  input b :: str;
+  str b -> input;
   run print_name : b;
 ```
