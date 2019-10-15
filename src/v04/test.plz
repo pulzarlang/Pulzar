@@ -13,5 +13,5 @@ print "Enter r:";
 int a -> input;
 run circle : a;
 print "Enter name:";
-input b :: str;
+int b - > input;
 run print_name : b;
