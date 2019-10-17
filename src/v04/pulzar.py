@@ -6,7 +6,7 @@
 """
 import lexer
 import mparser
-from flash_shell.main import shell
+#from flash_shell.main import shell
 
 import os
 import platform
@@ -23,7 +23,8 @@ def main():
     try:
         arg = sys.argv[1]
     except:
-        shell()
+        pass
+        #shell()
     #If file doesnt have .plz file extension, it will raise an error
     if sys.argv[1][-4:] != ".plz":
         print("FileError with file '{}':\nMust be .plz file".format (sys.argv[1]))

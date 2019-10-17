@@ -609,6 +609,7 @@ print("Executed: %s seconds" % (time.time() - start_time))
         tokens_checked = 0
         value = ""
         increment = ""
+        var_decl = False
         ast = {'loop' : []}
         
         for token in range(0,len(token_stream)):
@@ -626,35 +627,46 @@ print("Executed: %s seconds" % (time.time() - start_time))
                 value = token_value
                 ast['loop'].append({'name' : token_value})
                 ast['loop'].append({'start_value' : self.get_token_value(token_value)})
+            
+            elif token == 1 and token_type == "DATATYPE":
+                #check variale declaration
+                if token_stream[token + 1][0] == "IDENTIFIER" and token_stream[token + 2][0] == "OPERATOR" and token_stream[token + 3][0] in ["INTEGER","IDENTIFIER",]:
+                    ast['loop'].append({'name' : token_value})
+                    ast['loop'].append({'start_value' :token_stream[token + 3][1]})
+                    var_decl = True
 
-            elif token == 2 and token_type != "SEPARATOR":
+            elif token == 2 and token_type != "SEPARATOR" and var_decl == False:
+                msg = "SEPARATORError: at line:\nMust be '::'"
+                self.error_message(msg)
+
+            elif token == 5 and token_type != "SEPARATOR" and var_decl:
                 msg = "SEPARATORError: at line:\nMust be '::'"
                 self.error_message(msg)
 			
-            elif token == 3 and token_value != value:
+            elif (token == 3 and token_value != value):
                 print(token_value + " " +  ast['loop']['start_value'])
                 msg = ("ValueError: at line:\nMust be same as {}".format (ast[['Loop']]['start_value']))
                 self.error_message(msg)
             
-            elif token == 4 and token_type != "COMPARTION_OPERATOR":
+            elif token == 4 and token_type != "COMPARTION_OPERATOR" or token == 7 and token_type != "COMPARTION_OPERATOR":
                 msg = "OperatorError: at line:\nMust be operator"
                 self.error_message(msg)
 
             
-            elif token == 5 and token_type in ["INTEGER","IDENTIFIER"]:
+            elif token == 5 and token_type in ["INTEGER","IDENTIFIER"] or token == 8 and token_type in ["INTEGER","IDENTIFIER"]:
                 ast['loop'].append({'end_value' : token_value})
             
-            elif token == 6 and token_type != "SEPARATOR":
+            elif token == 6 and token_type != "SEPARATOR" or token == 9 and token_type != "SEPARATOR":
                 msg = "SeparatorError: at line:\nMust be '::'"
                 self.error_message(msg)
             
-            elif token == 7 and token_value == value + "++":
+            elif token == 7 and token_value == value + "++" or token == 10 and token_value == value + "++":
                 ast['loop'].append({'increment' : "+1"})
             
-            elif token == 7 and token_value == value + "--":
+            elif token == 7 and token_value == value + "--" or token == 10 and token_value == value + "--":
                 ast['loop'].append({'increment' : "-1"})
                        
-            tokens_checked+=1
+            tokens_checked += 1
 
         self.ast['main_scope'].append(ast)
 
@@ -670,9 +682,9 @@ print("Executed: %s seconds" % (time.time() - start_time))
             token_type = token_stream[tokens_checked][0]
             token_value = token_stream[tokens_checked][1]
 
-            if  token_type == "SCOPE" and token_value == "{":break
+            if  token_type == "SCOPE_DEFINIER" and token_value == "{":break
             
-            if  token_type == "SCOPE" and token_value == "}":break
+            if  token_type == "SCOPE_DEFIENIER" and token_value == "}":break
 
             if token == 1 and token_type == "IDENTIFIER":
                 ast['function_declaration'].append({'name' : token_value})
@@ -681,6 +693,8 @@ print("Executed: %s seconds" % (time.time() - start_time))
                 self.error_message("Error:")
             
             elif token == 3 and token_value == "0":
+                value = token_value
+            elif token == 3 and token_type in ["IDENTIFIER","COMMA"]:
                 value = token_value
             
             elif token > 3 and token_type in ["IDENTIFIER","COMMA"]:

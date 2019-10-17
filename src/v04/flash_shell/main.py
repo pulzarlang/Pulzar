@@ -1,6 +1,6 @@
 import ctypes
-#import pyfiglet
-#from colorama import *
+import pyfiglet
+from colorama import *
 import re
 import math
 import os
