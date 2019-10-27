@@ -20,14 +20,16 @@ class Parser(object):
         self.tokens = token_stream
         self.include = include
         self.ast = { 'main_scope' : [] }
-        self.symbol_tree = []
+        self.symbol_table = []
         self.transpiled_code = ""
 
         self.token_index = 0
         
     
     def parse(self):
-
+        """
+        This function takes tokens from lexer and #TODO
+        """
         count = 0
         for self.token_index  in range(len(self.tokens)):
 
@@ -46,7 +48,7 @@ class Parser(object):
                 self.parse_variable(self.tokens[self.token_index:len(self.tokens)],False,True)
             #Check if it was already dececlared
                         
-            elif token_type == "IDENTIFIER" and token_value in self.symbol_tree:
+            elif token_type == "IDENTIFIER" and token_value in self.symbol_table:
                 self.parse_variable(self.tokens[self.token_index:len(self.tokens)],False,False)
 
 
@@ -54,7 +56,7 @@ class Parser(object):
                 self.parse_builtin(self.tokens[self.token_index:len(self.tokens)])
             
             elif token_type == "MATH_FUNCTION":
-                self.parse_math(self.tokens[self.token_index:len(self.tokens)],token_value,False)
+                self.parse_math(self.tokens[self.token_index:len(self.tokens)],False)
                      
             elif token_type == "KEYWORD" and token_value == "if" or token_value == "else" or token_value == "elseif":
                 self.parse_conditional_statments(self.tokens[self.token_index:len(self.tokens)])
@@ -73,28 +75,14 @@ class Parser(object):
                 self.parse_comment(self.tokens[self.token_index:len(self.tokens)])
 
             elif token_type == "UNDEFINIED":
-                #TODO Identify bettrer errors
+                #TODO Identify better errors
                 self.error_message("SyntaxError: \n Undefinied")
 
             self.token_index += 1
         if count == 0:
              self.error_message("Program Error: \nType must be included in code")
         
-        print("Abstract Syntax Tree:")
-        return self.ast
-        if self.include == True:
-            print(17*"-" + "CODE GENERATION" + 18*"-")
-            print("-"*50)
-            print(self.transpiled_code)
-            print("#"*21,"OUTPUT","#"*21)
-            exec('''import time
-start_time = time.time()
-'''+self.transpiled_code+'''
-print()
-print("Executed: %s seconds" % (time.time() - start_time))
-            ''')
-        else:
-            exec('import time\nstart_time = time.time()\n'+self.transpiled_code+'\nprint("Executed: %s seconds" % (time.time() - start_time))\n')
+        return "Abstract Syntax Tree:\n{}".format (self.ast)
         
     def parse_include(self,token_stream):
         tokens_checked = 0
@@ -125,97 +113,38 @@ print("Executed: %s seconds" % (time.time() - start_time))
 
         self.token_index += tokens_checked
     
-    def parse_math(self,token_stream,iden):
+    def parse_math(self,token_stream,):
         
-        if iden == "factorial":
-            value = ""
-            tokens_checked = 0
-            for token in range(0,len(token_stream)):
+        value = ""
+        tokens_checked = 0
+        ast = {'math' : []}
+        for token in range(0,len(token_stream)):
 			
-                token_type = token_stream[tokens_checked][0]
-                token_value = token_stream[tokens_checked][1]
-                
-                if token_type == "SEMIC":break
-                
-                if token == 1 and token_type in ["INT","ID"]:
-                    value = token_value
-                
-                elif token == 1 and token_type not in ["INTEGER","IDENTIFIER"]:
-                    msg = "Error: "+token_value+" must be int"
-                    self.error_message(msg)
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
+            
+            if token_type == "SEMIC":break
 
-                elif token > 1 and token % 2 == 0:
-                    value += token_value
+            if token == 0: ast.append({'function' : token_value})
                 
-                elif token > 1 and token % 2 != 0:
-                    value += token_value
+            if token == 1 and token_type in ["INT","ID"]:
+                value = token_value
+                
+            elif token == 1 and token_type not in ["INTEGER","IDENTIFIER"]:
+                msg = "Error: "+token_value+" must be int"
+                self.error_message(msg)
 
-                tokens_checked+=1
+            elif token > 1 and token % 2 == 0:
+                value += token_value
 
-            x = "MathModule().factorial({})".format (value)
+            tokens_checked += 1
 
-            return x
+        ast['math'].append({'arguments' : value})
+        self.ast['main_scope'].append(ast)
         
-            self.token_index += tokens_checked
+        self.token_index += tokens_checked
 
-        if iden == "complex":
-                    value = ""
-                    tokens_checked = 0
-                    for token in range(0,len(token_stream)):
-                    
-                        token_type = token_stream[tokens_checked][0]
-                        token_value = token_stream[tokens_checked][1]
-                        
-                        if token_type == "SEMIC":break
-                        
-                        if token == 1 and token_type in ["COMPLEX_NUM","ID"]:
-                            value = token_value.replace("i","j")
-                        
-                        elif token == 1 and token_type not in ["COMPLEX_NUM","ID"]:
-                            msg = "Error: "+token_value+" must be int"
-                            self.error_message(msg)
-
-                        elif token >= 2 and token % 2 == 0 and token_type == "OP":
-                            value += token_value
-                        
-                        elif token >= 2 and token % 2 != 0:
-                            value += token_value.replace("i","j")
-
-                        tokens_checked+=1
-
-                    x = "MathModule().complex({})".format (value)
-
-                    libObj = libObject()
-                    self.transpiled_code += libObj.transpile_math(x)
-                
-                    self.token_index += tokens_checked
-        
-        elif var == True:
-            value = ""
-            tokens_checked = 0
-            for token in range(0,len(token_stream)):
-			
-                token_type = token_stream[tokens_checked][0]
-                token_value = token_stream[tokens_checked][1]
-                
-                if token_type == "SEMIC":break
-                
-                if token == 1 and token_type in ["INT","ID"]:
-                    value = token_value
-                
-                elif token == 1 and token_type not in ["INT","ID"]:
-                    msg = "Error: "+token_value+" must be int"
-                    self.error_message(msg)
-
-                elif token > 1 and token % 2 == 0:
-                    value += token_value
-                
-                elif token > 1 and token % 2 != 0:
-                    value += token_value
-
-                tokens_checked+=1
-            x = "MathModule().factorial({})".format (value)
-            return x
+        return [ast, tokens_checked]
 
     def parse_program(self,token_stream):
 		
@@ -240,7 +169,8 @@ print("Executed: %s seconds" % (time.time() - start_time))
         self.token_index += tokens_checked
 
         self.ast['main_scope'].append(ast)
-        return ast
+
+        return [ast, tokens_checked]
 
     def parse_variable(self, token_stream,inScope,decl):
         if decl == True:
@@ -344,13 +274,15 @@ print("Executed: %s seconds" % (time.time() - start_time))
                 except: pass
             
             ast['variable_declaration'].append({'value' : value})
+            
+            if inScope == False:
+                self.ast['main_scope'].append(ast)
 
-            self.ast['main_scope'].append(ast)
-
-            self.symbol_tree.append([ast['variable_declaration'][1]['name'], ast['variable_declaration'][2]['value']])
-            print(self.symbol_tree)
+            self.symbol_table.append([ast['variable_declaration'][1]['name'], ast['variable_declaration'][2]['value']])
 
             self.token_index += tokens_checked
+            
+            return [ast,tokens_checked]
 
         elif decl == False:
 			
@@ -409,8 +341,6 @@ print("Executed: %s seconds" % (time.time() - start_time))
                 elif token == 3 and token_type not in ['INTEGER', 'OPERATOR', 'STRING', 'IDENTIFIER','LATEX',"COMPLEX_NUMBER"]:
                     msg = "ValueError at line:\nInvalid Variable value '"+token_value+"'"
                     self.error_message(msg)
-
-
                 
                 elif token > 3:
                     value += token_value
@@ -461,8 +391,13 @@ print("Executed: %s seconds" % (time.time() - start_time))
             else: body_tokens.append(token)
 
         return [body_tokens, tokens_checked,nesting_count]
-    
+
+
     def parse_scope(self,token_stream, ast):
+        ast = {'body' : []}
+        tokens_checked = 0
+        nesting_count = 0
+
         for tokens_checked  in range(len(token_stream)):
 
             token_type = [tokens_checked][0]
@@ -470,41 +405,69 @@ print("Executed: %s seconds" % (time.time() - start_time))
 
             #If token is echo add tokens to parse_include()
             if token_type == "KEYWORD" and token_value == "include":
-                self.parse_include(self.tokens[self.token_index:len(self.tokens)])
+                include = self.parse_include(self.tokens[self.token_index:len(self.tokens)])
+                ast['body'].append(include[0])
+                tokens_checked += include[1]
             
             elif token_type == "DATATYPE":
-                self.parse_variable(self.tokens[self.token_index:len(self.tokens)],True,True)
+                var = self.parse_variable(self.tokens[self.token_index:len(self.tokens)],True,True)
+                ast['body'].append(var[0])
+                tokens_checked += var[1]
 
             #Check if it was already dececlared
-            elif token_type == "IDENTIFIER" and token_value in self.symbol_tree:
-                self.parse_variable(self.tokens[self.token_index:len(self.tokens)],True,False)
-
+            elif token_type == "IDENTIFIER" and token_value in self.symbol_table:
+                var = self.parse_variable(self.tokens[self.token_index:len(self.tokens)],True,False)
+                ast['body'].append(var[0])
+                tokens_checked += var[1]
 
             elif token_type == "BUILT_IN_FUNCTION":
-                self.parse_builtin(self.tokens[self.token_index:len(self.tokens)])
+                builtin = self.parse_builtin(self.tokens[self.token_index:len(self.tokens)])
+                ast['body'].append(builtin[0])
+                tokens_checked += builtin[1]
             
             elif token_type == "MATH_FUNCTION":
-                self.parse_math(self.tokens[self.token_index:len(self.tokens)],token_value,False)
+                math = self.parse_math(self.tokens[self.token_index:len(self.tokens)],token_value,False)
+                ast['body'].append(math[0])
+                tokens_checked += math[1]
                      
             elif token_type == "KEYWORD" and token_value == "if" or token_value == "else" or token_value == "elseif":
-                self.parse_conditional_statments(self.tokens[self.token_index:len(self.tokens)])
-            
-            elif token_type == "KEYWORD" and token_value == "for":
-                self.parse_loop(self.tokens[self.token_index:len(self.tokens)])
+                condtitional = self.parse_conditional_statments(self.tokens[self.token_index:len(self.tokens)])
+                ast['body'].append(condtitional[0])
+                tokens_checked += condtitional[1] - 1
 
+            elif token_type == "KEYWORD" and token_value == "for":
+                loop = self.parse_loop(self.tokens[self.token_index:len(self.tokens)])
+                ast['body'].append(loop[0])
+                tokens_checked += loop[1]
+
+            elif token_type == "KEYWORD" and token_value == "while":
+                loop = self.parse_loop(self.tokens[self.token_index:len(self.tokens)])
+                ast['body'].append(loop[0])
+                tokens_checked += loop[1]
             
             elif token_type == "KEYWORD" and token_value == "func":
-                self.parse_func(self.tokens[self.token_index:len(self.tokens)])
-            
+                function = self.parse_func(self.tokens[self.token_index:len(self.tokens)])
+                ast['body'].append(function[0])
+                tokens_checked += function[1]
+
             elif token_type == "KEYWORD" and token_value == "run":
-                self.find_func(self.tokens[self.token_index:len(self.tokens)])
+                run = self.find_func(self.tokens[self.token_index:len(self.tokens)])
+                ast['body'].append(run[0])
+                tokens_checked += run[1]
             
             elif token_type == "COMMENT":
-                self.parse_comment(self.tokens[self.token_index:len(self.tokens)])
+                comment = self.parse_comment(self.tokens[self.token_index:len(self.tokens)])
+                ast['body'].append(comment[0])
+                tokens_checked += comment[1]
 
             elif token_type == "UNDEFINIED":
-                #TODO Identify bettrer errors
+                #TODO Identify better errors
                 self.error_message("SyntaxError: \n Undefinied")
+
+        self.token_index += nesting_count + 1
+
+        statement_ast[astName].append(ast)
+        self.ast.append(statement_ast[astName])
     
     def parse_builtin(self,token_stream):
 
@@ -521,13 +484,14 @@ print("Executed: %s seconds" % (time.time() - start_time))
             if token == 0:
                 ast['builtin_function'].append({'function' : token_value})
         
-            if token == 1:
+            if token_type =="IDENTIFIER":
+                #TODO value = self.get_token_value(token_value)
                 value = token_value
                     
-            elif token > 1 and token_type in ["INTEGER", "OPERATOR", "BRACKET"]:
+            elif token > 1 and token_type in ["INTEGER", "OPERATOR", "BRACKET", "STRING", "IDENTIFIER"]:
                 value += token_value
 
-            tokens_checked+=1
+            tokens_checked += 1
         
         if type(value) == int:
             try:value = eval(value)
@@ -543,10 +507,10 @@ print("Executed: %s seconds" % (time.time() - start_time))
         ast['builtin_function'].append({'argument' : value})
 
         self.ast['main_scope'].append(ast)
-        
-        return ast
 
         self.token_index += tokens_checked
+
+        return [ast,tokens_checked]
         
     def parse_conditional_statments(self,token_stream):
 
@@ -590,18 +554,19 @@ print("Executed: %s seconds" % (time.time() - start_time))
 
         self.ast['main_scope'].append(ast)
 
+        scope_tokens =  self.get_scope(token_stream[tokens_checked:len(token_stream)])
 
+        print(scope_tokens)
+        self.parse_scope(scope_tokens[0], ast)
 
-        #self.parse_scope(scope_tokens[0], ast)
+        tokens_checked += scope_tokens[1]
 
-        #tokens_checked += scope_tokens[1]
-
-        #return [ast, tokens_checked]
-    
         self.token_index += tokens_checked
 
+        return [ast, tokens_checked]
+
     def get_token_value(self,token):
-        for variable in self.symbol_tree:
+        for variable in self.symbol_table:
             if variable[0] == token: return variable[1]
 
     def parse_loop(self,token_stream):
@@ -644,26 +609,26 @@ print("Executed: %s seconds" % (time.time() - start_time))
                 self.error_message(msg)
 			
             elif (token == 3 and token_value != value):
-                print(token_value + " " +  ast['loop']['start_value'])
-                msg = ("ValueError: at line:\nMust be same as {}".format (ast[['Loop']]['start_value']))
+                print(token_value, [ast['loop'][2]['start_value']])
+                msg = ("ValueError: at line:\nMust be same as ",[ast['loop'][2]['start_value']])
                 self.error_message(msg)
             
-            elif token == 4 and token_type != "COMPARTION_OPERATOR" or token == 7 and token_type != "COMPARTION_OPERATOR":
-                msg = "OperatorError: at line:\nMust be operator"
+            elif token == 4 and token_type != "COMPARTION_OPERATOR" :
+                msg = "OperatorError at line:\nMust be operator"
                 self.error_message(msg)
 
             
-            elif token == 5 and token_type in ["INTEGER","IDENTIFIER"] or token == 8 and token_type in ["INTEGER","IDENTIFIER"]:
+            elif token == 5 and token_type in ["INTEGER","IDENTIFIER"]:
                 ast['loop'].append({'end_value' : token_value})
             
-            elif token == 6 and token_type != "SEPARATOR" or token == 9 and token_type != "SEPARATOR":
+            elif token == 6 and token_type != "SEPARATOR":
                 msg = "SeparatorError: at line:\nMust be '::'"
                 self.error_message(msg)
             
-            elif token == 7 and token_value == value + "++" or token == 10 and token_value == value + "++":
-                ast['loop'].append({'increment' : "+1"})
+            elif token == 7 and token_value == value + "++":
+                ast['loop'].append({'increment' : "1"})
             
-            elif token == 7 and token_value == value + "--" or token == 10 and token_value == value + "--":
+            elif token == 7 and token_value == value + "--":
                 ast['loop'].append({'increment' : "-1"})
                        
             tokens_checked += 1
@@ -671,6 +636,8 @@ print("Executed: %s seconds" % (time.time() - start_time))
         self.ast['main_scope'].append(ast)
 
         self.token_index += tokens_checked
+
+        return [ast,tokens_checked]
     
     def parse_func(self,token_stream):
         tokens_checked = 0
@@ -694,6 +661,7 @@ print("Executed: %s seconds" % (time.time() - start_time))
             
             elif token == 3 and token_value == "0":
                 value = token_value
+
             elif token == 3 and token_type in ["IDENTIFIER","COMMA"]:
                 value = token_value
             
@@ -708,7 +676,9 @@ print("Executed: %s seconds" % (time.time() - start_time))
         
         self.ast['main_scope'].append(ast)
 
-    def parse_comment(self,token_stream):
+        return [ast,tokens_checked]
+
+    def parse_comment(self,token_stream,isScope):
         tokens_checked = 0
         comment_str = ""
         ast = {'comment': []}
@@ -725,9 +695,13 @@ print("Executed: %s seconds" % (time.time() - start_time))
 
             tokens_checked+=1
         ast['comment'].append({'Comment_str' : comment_str})
-        self.ast['main_scope'].append(ast)
+
+        if inScope == False:
+            self.ast['main_scope'].append(ast)
         
         self.token_index += tokens_checked
+
+        return [ast, tokens_checked]
         
     def parse_macros(self,token_stream):
         """
