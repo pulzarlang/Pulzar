@@ -10,10 +10,10 @@ func print_name : name
     echo "Hello" + "\s" + name;
 }
 print "Enter r:";
-input a :: int;
+input int a;
 circle : a;
 print "Enter name:";
-input b :: str;
+input str b;
 print_name : b;
 int x = 0;
 for x :: x < 10 :: x++ {

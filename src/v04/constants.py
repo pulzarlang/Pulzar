@@ -1,4 +1,4 @@
-KEYWORDS = ["include","Program", "if", "else", "elif", "for", "while", "func", "run", "class",]
+KEYWORDS = ["include","Program", "if", "else", "elif", "for", "while", "func", "return", "run", "class",]
 BUILT_IN = ["echo","print", "input", "system"]
 MATH = ["pow", "sqrt", "factorial", "complex", "sin", "cos", "tan", "integral"]
 DATATYPE = ["var","bool", "int", "float", "str", "char"]

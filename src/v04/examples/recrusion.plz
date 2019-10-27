@@ -5,7 +5,7 @@ func fib : n {
 		return 1;
 	}
 	else {
-		return n + fib : n-1;
+		return fib: (n - 1) + fib : (n - 2);
 	}
 }
 run fib : 10;

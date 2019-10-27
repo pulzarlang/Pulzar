@@ -400,8 +400,8 @@ class Parser(object):
 
         for tokens_checked  in range(len(token_stream)):
 
-            token_type = [tokens_checked][0]
-            token_value = [tokens_checked][1]
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
 
             #If token is echo add tokens to parse_include()
             if token_type == "KEYWORD" and token_value == "include":
@@ -426,37 +426,37 @@ class Parser(object):
                 tokens_checked += builtin[1]
             
             elif token_type == "MATH_FUNCTION":
-                math = self.parse_math(self.tokens[self.token_index:len(self.tokens)],token_value,False)
+                math = self.parse_math(self.tokens[self.token_index:len(self.tokens)],True)
                 ast['body'].append(math[0])
                 tokens_checked += math[1]
                      
             elif token_type == "KEYWORD" and token_value == "if" or token_value == "else" or token_value == "elseif":
-                condtitional = self.parse_conditional_statments(self.tokens[self.token_index:len(self.tokens)])
+                condtitional = self.parse_conditional_statments(self.tokens[self.token_index:len(self.tokens)],True)
                 ast['body'].append(condtitional[0])
                 tokens_checked += condtitional[1] - 1
 
             elif token_type == "KEYWORD" and token_value == "for":
-                loop = self.parse_loop(self.tokens[self.token_index:len(self.tokens)])
+                loop = self.parse_loop(self.tokens[self.token_index:len(self.tokens)],True)
                 ast['body'].append(loop[0])
                 tokens_checked += loop[1]
 
             elif token_type == "KEYWORD" and token_value == "while":
-                loop = self.parse_loop(self.tokens[self.token_index:len(self.tokens)])
+                loop = self.parse_loop(self.tokens[self.token_index:len(self.tokens)],True)
                 ast['body'].append(loop[0])
                 tokens_checked += loop[1]
             
             elif token_type == "KEYWORD" and token_value == "func":
-                function = self.parse_func(self.tokens[self.token_index:len(self.tokens)])
+                function = self.parse_func(self.tokens[self.token_index:len(self.tokens)],True)
                 ast['body'].append(function[0])
                 tokens_checked += function[1]
 
             elif token_type == "KEYWORD" and token_value == "run":
-                run = self.find_func(self.tokens[self.token_index:len(self.tokens)])
+                run = self.find_func(self.tokens[self.token_index:len(self.tokens)],True)
                 ast['body'].append(run[0])
                 tokens_checked += run[1]
             
             elif token_type == "COMMENT":
-                comment = self.parse_comment(self.tokens[self.token_index:len(self.tokens)])
+                comment = self.parse_comment(self.tokens[self.token_index:len(self.tokens)],True)
                 ast['body'].append(comment[0])
                 tokens_checked += comment[1]
 
@@ -484,11 +484,11 @@ class Parser(object):
             if token == 0:
                 ast['builtin_function'].append({'function' : token_value})
         
-            if token_type =="IDENTIFIER":
+            if token == 1 and token_type =="IDENTIFIER":
                 #TODO value = self.get_token_value(token_value)
                 value = token_value
                     
-            elif token > 1 and token_type in ["INTEGER", "OPERATOR", "BRACKET", "STRING", "IDENTIFIER"]:
+            elif token > 1:
                 value += token_value
 
             tokens_checked += 1
@@ -704,7 +704,7 @@ class Parser(object):
         return [ast, tokens_checked]
         
     def parse_macros(self,token_stream):
-        """
+        """TODO
 		macros
 		{
 			define _var x_ {
@@ -723,8 +723,6 @@ class Parser(object):
             
             if token == 2 and token_type == "SCOPE_DEFINIER":
                 pass
-
-		
 
 #---------------------------BROWSER------------------------------------
 
