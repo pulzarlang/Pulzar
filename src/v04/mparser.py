@@ -82,7 +82,7 @@ class Parser(object):
         if count == 0:
              self.error_message("Program Error: \nType must be included in code")
         
-        return "Abstract Syntax Tree:\n{}".format (self.ast)
+        return self.ast
         
     def parse_include(self,token_stream):
         tokens_checked = 0

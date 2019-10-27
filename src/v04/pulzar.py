@@ -6,6 +6,7 @@
 """
 import lexer
 import mparser
+import generator
 #from flash_shell.main import shell
 
 import os
@@ -58,13 +59,18 @@ def main():
                     
         tokens = lex.tokenize()
         print(tokens)
-        print("\n--------------------------------------------------")
         #Parser
         print(22*"-" + " PARSER " + 22*"-")
 
         parse = mparser.Parser(tokens,True)
         ast = parse.parse()
+        print("Abstract Syntax Tree")
         print(ast)
+        print(17*"-" + "CODE GENERATION" + 18*"-")
+        gen = generator.Generation(ast).generate()
+        print(gen)
+        print("#"*21,"OUTPUT","#"*21)
+        #exec(gen)
         quit()
 
     elif sys.argv[2] == "-l" or sys.argv[2] == "--l":
@@ -83,7 +89,7 @@ def main():
         ast = parse.parse()
         print("-----------------CODE GENERATION--------------------")
         print(17*"-" + "CODE GENERATION" + 18*"-")
-        gen = generator.Generation.generate()
+        gen = generator.Generation(ast).generate()
         print(gen)
         print("-"*50)
         print("#"*21,"OUTPUT","#"*21)

@@ -8,34 +8,35 @@ from Obj.libObject import libObject
 
 import math
 import os
-class Generation(self):
-    def __init__(self,ast):
+class Generation(object):
+    def __init__(self,source_ast):
         self.transpiled_code = ""
-        self.ast = ast['main_scope']
+
+        self.source_ast = source_ast['main_scope']
     
     def generate(self):
+
         for ast in self.source_ast:
 
-
             if self.check_ast('variable_declaration', ast):
-                var = VariableObject(ast)
-                self.exec_string += var.transpile() + '\n'
+                var = VarObject(ast)
+                self.transpiled_code += var.transpile() + "\n"
 
             if self.check_ast('conditional_statement', ast):
-                condition = ConditionObject(ast, 1)
-                self.exec_string += condition.transpile() + '\n'
+                condition = ConditionalObject(ast, 1)
+                self.transpiled_code += condition.transpile() + "\n"
 
             if self.check_ast('builtin_function', ast):
-                builtin = BuiltInFunctionObject(ast)
-                self.exec_string += builtin.transpile() + "\n"
+                builtin = BuiltinObject(ast)
+                self.transpiled_code += builtin.transpile() + "\n"
 
             if self.check_ast('comment', ast):
                 comment = CommentObject(ast)
-                self.exec_string += comment.transpile() + "\n"
+                self.transpiled_code += comment.transpile() + "\n"
 
             if self.check_ast('loop', ast):
                 loop = LoopObject(ast, 1)
-                self.exec_string += loop.transpile() + "\n"
+                self.transpiled_coder += loop.transpile() + "\n"
 
         return self.exec_string
 

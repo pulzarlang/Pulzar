@@ -1,8 +1,6 @@
 Program Console;
 include math;
-var n;
-int a;
-a = 20;
+int n;
 func add : x, y {
 	echo x + y;
 }
