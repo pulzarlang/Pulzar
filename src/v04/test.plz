@@ -16,6 +16,6 @@ print "Enter name:";
 input str b;
 print_name : b;
 int x = 0;
-for x :: x < 10 :: x++ {
-    echo x ** 2;
+while x != 10 {
+    int x = x + 1;
 }

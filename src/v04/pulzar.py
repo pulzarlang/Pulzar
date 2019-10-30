@@ -37,16 +37,17 @@ def main():
 
     except:
         with open(sys.argv[1], "r") as f:
-                    code = f.read()
-                    #Lexer
-                    lex = lexer.Lexer(code)
-                    tokens = lex.tokenize()
-                    #Parser
-                    parse = mparser.Parser(tokens,False)
-                    ast = parse.parse()
-                    #gen = generator.Generation.generate()
-                    #exec(gen)
-                    quit()
+            code = f.read()
+            #Lexer
+            lex = lexer.Lexer(code)
+            tokens = lex.tokenize()
+            #Parser
+            parse = mparser.Parser(tokens,False)
+            ast = parse.parse()
+            obj = generator.Generation(ast)
+            gen = obj.generate()
+            exec(gen)
+            quit()
 
     if sys.argv[2] == "-t" or sys.argv[2] == "--t":
         with open(sys.argv[1], "r") as f:
@@ -67,10 +68,11 @@ def main():
         print("Abstract Syntax Tree")
         print(ast)
         print(17*"-" + "CODE GENERATION" + 18*"-")
-        gen = generator.Generation(ast).generate()
+        obj = generator.Generation(ast)
+        gen = obj.generate()
         print(gen)
         print("#"*21,"OUTPUT","#"*21)
-        #exec(gen)
+        exec(gen)
         quit()
 
     elif sys.argv[2] == "-l" or sys.argv[2] == "--l":
