@@ -3,6 +3,7 @@
 Author: Brian Turza
 """
 import constants
+import Lib.fmath as fmath
 from Lib.fmath import *
 from Obj.varObject import VarObject
 from Obj.builtinObject import BuiltinObject
