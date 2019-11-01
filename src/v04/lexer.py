@@ -87,12 +87,21 @@ class Lexer(object):
                     tokens.append(["IDENTIFIER", word])
                 
             elif re.match("[0-9]",word):
-                if word[len(word) - 1] == ';':
+                if word[len(word) - 1] == ';' and word[len(word) - 2] not in  ["!", "i"]:
                     tokens.append(["INTEGER",word[:-1]])
-                elif word[:- 1] == "i":
-                    tokens.append(["COMPLEX_NUMBER",word])
-                elif word[:- 1] == "!":
-                    tokens.append(["FACTORIAL",word])
+
+                elif word[len(word) - 1] == ";" and word[len(word) - 2] == "i":
+                    tokens.append(["COMPLEX_NUMBER",word[:-2]])
+
+                elif word[len(word) - 1] == ";" and word[len(word) - 2] == "!":
+                    tokens.append(["FACTORIAL",word[:-2]])
+
+                elif word[len(word) - 1] == "i":
+                    tokens.append(["COMPLEX_NUMBER",word[:-1]])
+
+                elif word[len(word) - 1] == "!":
+                    tokens.append(["FACTORIAL",word[:-1]])
+
                 else:
                     tokens.append(["INTEGER",word])
 

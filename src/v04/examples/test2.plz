@@ -1,7 +1,10 @@
 Program Console;
 include math;
-int n;
 func add : x, y {
-	echo x + y;
+	return x + y;
 }
-add : 5, 10;
+for x :: x < 10 :: ++x {
+	int n = 2 * x! - x * 5i; 
+}
+int a = add : 5, 10;
+echo n;

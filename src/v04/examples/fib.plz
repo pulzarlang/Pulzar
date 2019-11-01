@@ -1,0 +1,9 @@
+Porgram Console;
+print "Enter number:";
+input int a;
+
+while n >= 1 {
+	int num += n;
+	n--;
+}
+echo num;

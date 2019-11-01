@@ -21,7 +21,6 @@ class Parser(object):
         self.include = include
         self.ast = { 'main_scope' : [] }
         self.symbol_table = []
-        self.transpiled_code = ""
 
         self.token_index = 0
         
@@ -36,7 +35,7 @@ class Parser(object):
             token_type = self.tokens[self.token_index][0]
             token_value = self.tokens[self.token_index][1]
 
-            #If token is echo add tokens to parse_include()
+            #If token == echo add tokens to parse_include()
             if token_type == "KEYWORD" and token_value == "include":
                 self.parse_include(self.tokens[self.token_index:len(self.tokens)])
 
@@ -79,12 +78,14 @@ class Parser(object):
                 self.error_message("SyntaxError: \n Undefinied")
 
             self.token_index += 1
+        #If no Program declaration is found in code, calls a error message
         if count == 0:
              self.error_message("Program Error: \nType must be included in code")
         
         return self.ast
         
     def parse_include(self,token_stream):
+
         tokens_checked = 0
         list_lib = ["math","tools"]
         lib = ""
@@ -108,8 +109,7 @@ class Parser(object):
         
         self.ast['main_scope'].append(ast)
 
-        libObj = libObject()
-        self.transpiled_code += libObj.transpile_include(lib)
+        return [ast, tokens_checked]
 
         self.token_index += tokens_checked
     
@@ -173,6 +173,7 @@ class Parser(object):
         return [ast, tokens_checked]
 
     def parse_variable(self, token_stream,inScope,decl):
+
         if decl == True:
             tokens_checked = 0
 
@@ -182,11 +183,11 @@ class Parser(object):
             c = False
         
             for token in range(0,len(token_stream)):
-                
+
                 token_type = token_stream[tokens_checked][0]
                 token_value = token_stream[tokens_checked][1]
-                #If  semic is found loop breaks
 
+                #If  semic is found loop breaks
                 if token_type == "SEMIC": break
 
                 elif token == 0:
@@ -228,7 +229,7 @@ class Parser(object):
                         else:
                             self.error_message("variable value does not match defined type")
 
-                    elif type(eval(token_value)) == eval(token_stream[0][1]) and token != "IDENTIFIER":
+                    elif type(eval(token_value)) == eval(token_value) and token_type not in  ["IDENTIFIER", "COMPLEX", "FACTORIAL"] :
                         try: ast['variable_declaration'].append({ "value": int(token_value) })
                         except ValueError: ast['variable'].append({ "value": token_value })
                     else:

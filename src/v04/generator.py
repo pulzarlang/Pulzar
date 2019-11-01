@@ -23,7 +23,7 @@ class Generation(object):
                 self.transpiled_code += var.transpile() + "\n"
 
             if self.check_ast('conditional_statement', ast):
-                condition = ConditionalObject(ast, 1)
+                condition = ConditionalObject(ast)
                 self.transpiled_code += condition.transpile() + "\n"
 
             if self.check_ast('builtin_function', ast):
@@ -35,10 +35,10 @@ class Generation(object):
                 self.transpiled_code += comment.transpile() + "\n"
 
             if self.check_ast('loop', ast):
-                loop = LoopObject(ast, 1)
-                self.transpiled_coder += loop.transpile() + "\n"
+                loop = LoopObject(ast)
+                self.transpiled_code += loop.transpile() + "\n"
 
-        return self.exec_string
+        return self.transpiled_code
 
 
     def check_ast(self, astName, ast):

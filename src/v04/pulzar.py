@@ -19,7 +19,7 @@ if platform.system() == "Windows":
     os.system("title Pulzar v0.4")
 
 elif platform.system() == "linux" or platform.system() == "darwin":
-    sys.stdout.write("\x1b]2; Flash v0.3\x07")
+    sys.stdout.write("\x1b]2; Pulzar v0.4\x07")
 
 def main():
     try:
@@ -28,7 +28,7 @@ def main():
         pass
         #shell()
     #If file doesnt have .plz file extension, it will raise an error
-    if sys.argv[1][-4:] != ".plz":
+    if arg[-4:] != ".plz":
         print("FileError with file '{}':\nMust be .plz file".format (sys.argv[1]))
         quit()
     # Looks for second argument
@@ -37,16 +37,17 @@ def main():
 
     except:
         with open(sys.argv[1], "r") as f:
-                    code = f.read()
-                    #Lexer
-                    lex = lexer.Lexer(code)
-                    tokens = lex.tokenize()
-                    #Parser
-                    parse = mparser.Parser(tokens,False)
-                    ast = parse.parse()
-                    #gen = generator.Generation.generate()
-                    #exec(gen)
-                    quit()
+            code = f.read()
+            #Lexer
+            lex = lexer.Lexer(code)
+            tokens = lex.tokenize()
+            #Parser
+            parse = mparser.Parser(tokens,False)
+            ast = parse.parse()
+            obj = generator.Generation(ast)
+            gen = obj.generate()
+            exec(gen)
+            quit()
 
     if sys.argv[2] == "-t" or sys.argv[2] == "--t":
         with open(sys.argv[1], "r") as f:
@@ -67,11 +68,11 @@ def main():
         print("Abstract Syntax Tree")
         print(ast)
         print(17*"-" + "CODE GENERATION" + 18*"-")
-        gen = generator.Generation(ast).generate()
+        obj = generator.Generation(ast)
+        gen = obj.generate()
         print(gen)
         print("#"*21,"OUTPUT","#"*21)
-        #exec(gen)
-        quit()
+        exec(gen)
 
     elif sys.argv[2] == "-l" or sys.argv[2] == "--l":
         with open(sys.argv[1], "r") as f:
