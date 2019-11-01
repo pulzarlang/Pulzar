@@ -73,6 +73,7 @@ def main():
         print(gen)
         print("#"*21,"OUTPUT","#"*21)
         exec(gen)
+        quit()
 
     elif sys.argv[2] == "-l" or sys.argv[2] == "--l":
         with open(sys.argv[1], "r") as f:
