@@ -9,8 +9,8 @@ import mparser
 import os
 import sys
 import ctypes
-import pyfiglet
-from colorama import *
+#import pyfiglet
+#from colorama import *
 #Title
 os.system("title Flash v01")
 

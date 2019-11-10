@@ -39,8 +39,7 @@ class Generation(object):
                 self.transpiled_code += loop.transpile() + "\n"
 
         return self.transpiled_code
-
-
+        
     def check_ast(self, astName, ast):
         try:
             if ast[astName]: return True

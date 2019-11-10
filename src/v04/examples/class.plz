@@ -10,4 +10,4 @@ class Person : object {
         echo "I am " + this.age;
     }
 var Obj1 = Person.info : "Brian", 14;
-run Obj1;
+echo Obj1;

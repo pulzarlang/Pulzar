@@ -7,8 +7,13 @@ class VarObject(object):
     def transpile(self):
 
         for ast in self.ast:
-            try: self.exec_str += ast['name'] + " = " + str(ast['value'])
+            try: name = ast['name']
             except: pass
+
+            try: value = ast['value']
+            except: pass
+
+        self.exec_str += name + " = " + str(value)
 
         return self.exec_str
         
