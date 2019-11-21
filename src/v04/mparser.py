@@ -735,10 +735,6 @@ class Parser(object):
 
             tokens_checked+=1
 
-
-        funcObj = FuncObject()
-        self.transpiled_code += funcObj.transpile_run_func(name,argument)
-
         self.token_index += tokens_checked
 #--------------------------------------------------------------------------
 
