@@ -7,6 +7,7 @@ class BuiltinObject(object):
 
     def transpile(self):
         for ast in self.ast:
+            
             try: func = ast['function']
             except: pass
             try: arg = ast['argument']

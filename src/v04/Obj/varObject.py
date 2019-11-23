@@ -6,7 +6,8 @@ class VarObject(object):
     
     def transpile(self):
 
-        for ast in self.ast:
+        for ast in self.ast: 
+
             try: name = ast['name']
             except: pass
 

@@ -30,13 +30,17 @@ class Generation(object):
                 builtin = BuiltinObject(ast)
                 self.transpiled_code += builtin.transpile() + "\n"
 
-            if self.check_ast('comment', ast):
-                comment = CommentObject(ast)
-                self.transpiled_code += comment.transpile() + "\n"
-
             if self.check_ast('loop', ast):
                 loop = LoopObject(ast)
                 self.transpiled_code += loop.transpile() + "\n"
+            
+            if self.check_ast('function_declaration', ast):
+                func = FuncObject(ast)
+                self.transpiled_code += func.transpile() + "\n"
+            
+            if self.check_ast('return', ast):
+                return_ = ReturnObject(ast)
+                self.transpiled_code += return_.transpile() + "\n"
 
         return self.transpiled_code
         

@@ -38,18 +38,18 @@ class Parser(object):
                 count += 1
             
             elif token_type == "DATATYPE":
-                self.parse_variable(self.tokens[self.token_index:len(self.tokens)],False,True)
+                self.parse_variable(self.tokens[self.token_index:len(self.tokens)], False, True)
             #Check if it was already dececlared
                         
             elif token_type == "IDENTIFIER" and token_value in self.symbol_table:
-                self.parse_variable(self.tokens[self.token_index:len(self.tokens)],False,False)
+                self.parse_variable(self.tokens[self.token_index:len(self.tokens)], False, False)
 
 
             elif token_type == "BUILT_IN_FUNCTION":
                 self.parse_builtin(self.tokens[self.token_index:len(self.tokens)])
             
             elif token_type == "MATH_FUNCTION":
-                self.parse_math(self.tokens[self.token_index:len(self.tokens)],False)
+                self.parse_math(self.tokens[self.token_index:len(self.tokens)], False)
                      
             elif token_type == "KEYWORD" and token_value == "if" or token_value == "else" or token_value == "elseif":
                 self.parse_conditional_statments(self.tokens[self.token_index:len(self.tokens)])
@@ -60,6 +60,9 @@ class Parser(object):
             
             elif token_type == "KEYWORD" and token_value == "func":
                 self.parse_func(self.tokens[self.token_index:len(self.tokens)])
+            
+            elif token_type == "KEYWORD" and token_value == "return":
+                self.parse_return(self.tokens[self.token_index:len(self.tokens)])
             
             elif token_type == "KEYWORD" and token_value == "run":
                 self.find_func(self.tokens[self.token_index:len(self.tokens)])
@@ -494,6 +497,49 @@ class Parser(object):
             except: pass
 
         ast['builtin_function'].append({'argument' : value})
+
+        self.ast['main_scope'].append(ast)
+
+        self.token_index += tokens_checked
+
+        return [ast,tokens_checked]
+
+    def parse_return(self, token_stream):
+
+        tokens_checked = 0
+        value = ""
+        ast = {'return' : []}
+        for token in range(0,len(token_stream)):
+            
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
+
+            if token_type == "SEMIC": break
+        
+            if token == 1 and token_type =="IDENTIFIER":
+                #TODO value = self.get_token_value(token_value)
+                value = token_value
+            
+            elif token == 1 and token_type != "IDENTIFIER":
+                value = token_value
+                    
+            elif token > 1:
+                value += token_value
+
+            tokens_checked += 1
+        
+        if type(value) in [int, float]:
+            try:value = eval(value)
+            except:pass
+
+        elif type(value) == float:
+            value = float(value)
+        
+        elif type(value) == complex:
+            try: value = complex(value)
+            except: pass
+
+        ast['return'].append({'argument' : value})
 
         self.ast['main_scope'].append(ast)
 

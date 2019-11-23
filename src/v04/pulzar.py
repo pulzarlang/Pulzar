@@ -47,7 +47,6 @@ def main():
             obj = generator.Generation(ast)
             gen = obj.generate()
             exec(gen)
-            quit()
 
     if sys.argv[2] == "-t" or sys.argv[2] == "--t":
         with open(sys.argv[1], "r") as f:
@@ -73,33 +72,9 @@ def main():
         print(gen)
         print("#"*21,"OUTPUT","#"*21)
         exec(gen)
-        quit()
-
-    elif sys.argv[2] == "-l" or sys.argv[2] == "--l":
-        with open(sys.argv[1], "r") as f:
-            code = f.read()
-        #Lexer
-        print("--------------LEXICAL ANALYSYS---------------------\n")
-        lex = lexer.Lexer(code)
-                    
-        tokens = lex.tokenize()
-        print(tokens)
-        print("\n--------------------------------------------------")
-        #Parser
-
-        parse = mparser.Parser(tokens,True)
-        ast = parse.parse()
-        print("-----------------CODE GENERATION--------------------")
-        print(17*"-" + "CODE GENERATION" + 18*"-")
-        gen = generator.Generation(ast).generate()
-        print(gen)
-        print("-"*50)
-        print("#"*21,"OUTPUT","#"*21)
-        exec(gen)
-        quit()
 #---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     start_time = time.time()
     main()
-    print("Executed: %s seconds" % (time.time() - start_time))
+    print("\nExecuted in: %s seconds" % (time.time() - start_time))
