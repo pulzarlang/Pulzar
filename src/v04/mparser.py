@@ -21,7 +21,7 @@ class Parser(object):
     
     def parse(self):
         """
-        This function takes tokens from lexer and #TODO
+        This function takes tokens from lexer and procces them#TODO
         """
         count = 0
         for self.token_index  in range(len(self.tokens)):
@@ -38,7 +38,7 @@ class Parser(object):
                 count += 1
             
             elif token_type == "DATATYPE":
-                self.parse_variable(self.tokens[self.token_index:len(self.tokens)], False, True)
+                self.parse_variable(self.tokens[self.token_index:len(self.tokens)], False)
             #Check if it was already dececlared
                         
             elif token_type == "IDENTIFIER" and token_value in self.symbol_table:
@@ -169,192 +169,112 @@ class Parser(object):
 
         return [ast, tokens_checked]
 
-    def parse_variable(self, token_stream,inScope,decl):
-
-        if decl == True:
-            tokens_checked = 0
-            ast = { 'variable_declaration': [] }
-            value = ""
-            c = False
+    def parse_variable(self, token_stream,inScope):
+        tokens_checked = 0
+        ast = { 'variable_declaration': [] }
+        value = ""
+        c = False
         
-            for token in range(0,len(token_stream)):
+        for token in range(0,len(token_stream)):
 
-                token_type = token_stream[tokens_checked][0]
-                token_value = token_stream[tokens_checked][1]
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
 
-                #If  semic is found loop breaks
-                if token_type == "SEMIC": break
-                #If variable is only declared e. g.: int x;
-                elif token == 0 and token_stream[token + 2][0] == "SEMIC":
-                    #add var type E.g.: int, str, bool, float ...
-                    ast['variable_declaration'].append({'type' : token_value})
+            #If  semic is found loop breaks
+            if token_type == "SEMIC": break
+            #If variable is only declared e. g.: int x;
+            elif token == 0 and token_stream[2][0] == "SEMIC":
+                #add var type E.g.: int, str, bool, float ...
+                ast['variable_declaration'].append({'type' : token_value})
 
-                    if token_value in ["int", "float", "var"]:
-                        ast['variable_declaration'].append({ "value": "0" })
+                if token_value in ["int", "float", "var"]:
+                    ast['variable_declaration'].append({ "value": "0" })
 
-                    elif token_value == "str":
-                        ast['variable_declaration'].append({ "value": '""' })
+                elif token_value == "str":
+                    ast['variable_declaration'].append({ "value": '""' })
 
-                    elif token_value == "bool":
-                        ast['variable_declaration'].append({ "value": "None" })
+                elif token_value == "bool":
+                    ast['variable_declaration'].append({ "value": "None" })
+                    #Breaks so it wont repeat
+                    break
+            #If a builtin function or math is stroed in variable
+            elif token == 1 and token_stream[3][0] == "MATH" or token_stream[3][1] == "input":
+                pass
 
-                elif token == 1 and token_type == "IDENTIFIER":
+
+            elif token == 1 and token_type == "IDENTIFIER":
                     ast['variable_declaration'].append({ 'name': token_value })
                     
                 #Invalid variable name error
-                elif token == 1 and token_type != "IDENTIFIER":
+            elif token == 1 and token_type != "IDENTIFIER":
                     msg = ("NameErrorP\nInvalid variable name '"+token_value+"'")
                     self.error_message(msg)	
                 #Invalid operator Error
-                elif token == 2 and token_type not in ["OPERATOR", "INCREMENT_OPERATOR"]:
+            elif token == 2 and token_type not in ["OPERATOR", "INCREMENT_OPERATOR"]:
                     msg = "OperatorError\nInvalid operator '{}'".format (token_value)
                     self.error_message(msg)
                 
-                elif token == 3 and token_stream[0][1] != "var" and token_stream[tokens_checked + 1][0] == "SEMIC": 
+            elif token == 3 and token_stream[0][1] != "var" and token_stream[tokens_checked + 1][0] == "SEMIC": 
 
-                    if token_type == "IDENTIFIER":
-                        value = self.get_token_value(token_value)
-                        
-                        if type(eval(value)) == type(token_stream[0][1]):
-                            ast['variable_declaration'].append({ "value": token_value })
-                        else:
-                            self.error_message("variable value does not match defined type")
+                if token_type == "IDENTIFIER":
+                    value = self.get_token_value(token_value)
 
-                    elif token_type not in  ["IDENTIFIER", "COMPLEX", "FACTORIAL"] :
+                    if type(eval(value)) == type(token_stream[0][1]):
                         ast['variable_declaration'].append({ "value": token_value })
-                
-                elif token == 3 and token_type in  ['INTEGER', 'OPERATOR', 'STRING', 'IDENTIFIER','LATEX','COMPLEX_NUMBER']:
-                    value = token_value
-
-                elif token == 3 and token_type == token_type == "COMPLEX_NUMBER":
-                    value = token_value.replace("i","j")
-                    c = True
-                
-                elif token == 3 and token_type == "STRING":
-                    value = token_value.replace("\s", " ")
-
-                elif token  <= 3 and token_type == "IDENTIFIER":
-                    value = self.get_token_value(token_value)
-                    print(value)
-
-                elif token == 3 and token_type not in ['INTEGER', 'OPERATOR', 'STRING', 'IDENTIFIER','LATEX',"COMPLEX_NUMBER"]:
-                    msg = "ValueError at line:\nInvalid Variable value '"+token_value+"'"
-                    self.error_message(msg)
-
-
-                
-                elif token > 3:
-                    value += token_value
-                
-                elif token_type == "BRACKET":
-                    value += token_value
-
-                tokens_checked += 1
-
-            if type(value) == int:
-                try:value = eval(value)
-                except:pass
-
-            elif type(value) == float:
-                value = float(value)
-            
-            elif type(value) == complex:
-                try: value = complex(value)
-                except: pass
-            
-            ast['variable_declaration'].append({'value' : value})
-            
-            if inScope == False:
-                self.ast['main_scope'].append(ast)
-
-            #self.symbol_table.append([ast['variable_declaration'][1]['name'], ast['variable_declaration'][2]['value']])
-
-            self.token_index += tokens_checked
-            
-            return [ast,tokens_checked]
-
-        elif decl == False:
-			
-            tokens_checked = 0
-            func = ["factorial", "sin",]
-            ast = { 'variable': [] }
-            value = ""
-            c = False
-            for token in range(0,len(token_stream)):
-                
-                token_type = token_stream[tokens_checked][0]
-                token_value = token_stream[tokens_checked][1]
-                #If  semic is found loop breaks
-
-                if token_type == "SEMIC": break
-                
-                elif token == 1 and token_type == "IDENTIFIER":
-                    print(token_value)
-                    ast['variable'].append({ 'name': token_value })
-                #Invalid operator Error
-                elif token == 2 and token_type != "OPERATOR":
-                    msg = "OperatorError\nInvalid operator"
-                    self.error_message(msg)
-                
-                elif token == 3 and token_stream[token + 1][0] == "SEMIC": 
-
-                    if token_type == "IDENTIFIER":
-                        value = self.get_token_value(token_value)
-
-                        if type(eval(value)) == eval(token_stream[0][1]):
-                            try: ast['variable_declaration'].append({ "value": int(token_value) })
-                            except ValueError: ast['variable_declaration'].append({ "value": token_value })
-                        else:
-                            self.error_message("variable value does not match defined type")
-
-                    elif type(eval(token_value)) == eval(token_stream[0][1]) and token != "IDENTIFIER":
-                        try: ast['variable_declaration'].append({ "value": int(token_value) })
-                        except ValueError: ast['variable_declaration'].append({ "value": token_value })
                     else:
-                        self.error_message("Variable value does not match defined type")
-                
-                elif token == 3 and token_type in  ['INTEGER', 'OPERATOR', 'STRING', 'IDENTIFIER','LATEX','COMPLEX_NUMBER']:
-                    value = token_value
+                        self.error_message("variable value does not match defined type")
 
-                elif token == 3 and token_type == token_type == "COMPLEX_NUMBER":
-                    value = token_value.replace("i","j")
-                    c = True
+                elif token_type not in  ["IDENTIFIER", "COMPLEX", "FACTORIAL"] :
+                    ast['variable_declaration'].append({ "value": token_value })
                 
-                elif token == 3 and token_type == "STRING":
-                    value = token_value.replace("\s", " ")
+            elif token == 3 and token_type in  ['INTEGER', 'OPERATOR', 'STRING', 'IDENTIFIER','LATEX','COMPLEX_NUMBER']:
+                value = token_value
 
-                elif token  <= 3 and token_type == "IDENTIFIER":
-                    value = self.get_token_value(token_value)
-                    print(value)
-
-                elif token == 3 and token_type not in ['INTEGER', 'OPERATOR', 'STRING', 'IDENTIFIER','LATEX',"COMPLEX_NUMBER"]:
-                    msg = "ValueError at line:\nInvalid Variable value '"+token_value+"'"
-                    self.error_message(msg)
+            elif token == 3 and token_type == token_type == "COMPLEX_NUMBER":
+                value = token_value.replace("i","j")
+                c = True
                 
-                elif token > 3:
+            elif token == 3 and token_type == "STRING":
+                value = token_value.replace("\s", " ")
+
+            elif token  <= 3 and token_type == "IDENTIFIER":
+                value = self.get_token_value(token_value)
+                print(value)
+
+            elif token == 3 and token_type not in ['INTEGER', 'OPERATOR', 'STRING', 'IDENTIFIER','LATEX',"COMPLEX_NUMBER"]:
+                msg = "ValueError at line:\nInvalid Variable value '"+token_value+"'"
+                self.error_message(msg)
+
+            elif token > 3:
+                value += token_value
+                
+            elif token_type == "BRACKET":
                     value += token_value
-                
-                elif token_type == "BRACKET":
-                    value += token_value
 
-                tokens_checked += 1
+        tokens_checked += 1
 
-            if type(value) == int:
-                try:value = eval(value)
-                except:pass
+        if type(value) == int:
+            try: value = eval(value)
+            except: pass
 
-            elif type(value) == float:
-                value = float(value)
+        elif type(value) == float:
+            value = float(value)
             
-            elif type(value) == complex:
-                try: value = complex(value)
-                except: pass
+        elif type(value) == complex:
+            try: value = complex(value)
+            except: pass
             
-            ast['variable_declaration'].append({'value' : value})
-
+        ast['variable_declaration'].append({'value' : value})
+            
+        if inScope == False:
             self.ast['main_scope'].append(ast)
 
-            self.token_index += tokens_checked
+        self.symbol_table.append([ast['variable_declaration'][1]['name'], ast['variable_declaration'][2]['value']])
+
+        self.token_index += tokens_checked
+            
+        return [ast,tokens_checked]
+
 
 
     def get_scope(self, token_stream):
@@ -624,7 +544,7 @@ class Parser(object):
                 ast['loop'].append({'keyword' : token_value})
             
             if token == 1 and token_type in "IDENTIFIER":
-                value = token_value
+                self.get_token_value(token_value)
                 ast['loop'].append({'name' : token_value})
                 ast['loop'].append({'start_value' : self.get_token_value(token_value)})
             
@@ -632,7 +552,7 @@ class Parser(object):
                 #check variale declaration
                 if token_stream[token + 1][0] == "IDENTIFIER" and token_stream[token + 2][0] == "OPERATOR" and token_stream[token + 3][0] in ["INTEGER","IDENTIFIER",]:
                     ast['loop'].append({'name' : token_value})
-                    ast['loop'].append({'start_value' :token_stream[token + 3][1]})
+                    ast['loop'].append({'start_value' : token_stream[token + 3][1]})
 
             elif token == [2, 5] and token_type != "SEPARATOR":
                 msg = "SEPARATORError: at line:\nMust be '::'"
@@ -643,7 +563,7 @@ class Parser(object):
                 #msg = ("ValueError: at line:\nMust be same as ", [ast['loop'][2]['start_value']])
                 #self.error_message(msg)
             
-            elif token in [4, 7] and token_type != "COMPARTION_OPERATOR":
+            elif token == [4, 7] and token_type != "COMPARTION_OPERATOR":
                 msg = token_value + "CompertionError at line:\nMust be operator"
                 self.error_message(msg)
 
@@ -651,14 +571,14 @@ class Parser(object):
             elif token in [5, 8] and token_type in ["INTEGER","IDENTIFIER"]:
                 ast['loop'].append({'end_value' : token_value})
             
-            elif token in [6, 9] and token_type != "SEPARATOR":
+            elif token == [6, 9] and token_type != "SEPARATOR":
                 msg = "SeparatorError: at line:\nMust be '::'"
                 self.error_message(msg)
             
-            elif token in [7, 10] and token_value == value + "++":
+            elif token == 7 and token_type in ["INCREMENT", "INDETIFIER"]:
                 ast['loop'].append({'increment' : "1"})
             
-            elif token in [7, 10] and token_value == value + "--":
+            elif token == 7 and token_type in ["DECREMENT", "IDENTIFIER"]:
                 ast['loop'].append({'increment' : "-1"})
                        
             tokens_checked += 1

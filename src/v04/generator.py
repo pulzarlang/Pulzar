@@ -5,6 +5,7 @@ from Obj.loopObject import LoopObject
 from Obj.functionObject import FuncObject
 from Obj.conditionalObject import ConditionalObject
 from Obj.libObject import libObject
+from Obj.returnObject import ReturnObject
 
 import math
 import os
@@ -32,11 +33,11 @@ class Generation(object):
 
             if self.check_ast('loop', ast):
                 loop = LoopObject(ast)
-                self.transpiled_code += loop.transpile() + "\n"
+                self.transpiled_code += loop.transpile() + "\n" + "\t"
             
             if self.check_ast('function_declaration', ast):
                 func = FuncObject(ast)
-                self.transpiled_code += func.transpile() + "\n"
+                self.transpiled_code += func.transpile() + "\n" + "\t"
             
             if self.check_ast('return', ast):
                 return_ = ReturnObject(ast)

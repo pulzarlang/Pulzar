@@ -6,7 +6,7 @@ class LoopObject(object):
 
     def transpile(self):
         for ast in self.ast:
-
+            print(ast)
             try: keyword = ast['keyword']
             except: pass
             
@@ -16,18 +16,19 @@ class LoopObject(object):
             try: start_value = ast['start_value']
             except: pass
 
-			# Get the endValue
             try: end_value = ast['end_value']
             except: pass
 
-			# Get the incrementer
-            try: incrementer = ast['incrementer']
+            try: increment = ast['increment']
             except: pass
 
-            if str(keyword) == "for":
-                self.exec_str += "for "+ name + "in range("+ str(start_value) + ", " + str(end_value) + ", " + str(incrementer) + "):"
+            try: condition = ast['condition']
+            except: pass
 
-            if str(keyword) == 'while':
-                self.exec_str += "while "+ name + " " + condtion + ":"
+        if str(keyword) == "for":
+            self.exec_str += "for "+ name + " in range("+ str(start_value) + ", " + str(end_value) + ", " + str(increment) + "):"
+
+        if str(keyword) == 'while':
+            self.exec_str += "while "+ name + " " + condition + ":"
         
         return self.exec_str

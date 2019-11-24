@@ -67,7 +67,7 @@ class Lexer(object):
             elif word in constants.MATH: tokens.append(["MATH_FUNCTION",word])
 
 
-            elif word in constants.OPERATORS: tokens.append(["OPERATOR",word])
+            elif word in constants.OPERATORS and word[:2] not in ["++", "--"]: tokens.append(["OPERATOR",word])
             
             elif word in constants.COMARTION_OPERATORS: tokens.append(["COMPARTION_OPERATOR", word])
             
@@ -81,8 +81,10 @@ class Lexer(object):
                     tokens.append(["IDENTIFIER", word[:-1]])
                 elif word[len(word) - 1] == ",":
                     tokens.append(["IDENTIFIER", word[:-1]])
-                elif word[:-2] == "++" or word[:2] == "++" or word[:-2] == "--" or word[:2] == "--":
+                elif word[len(word) - 2] == "++" or word[:2] == "++":
                     tokens.append(["INCREMENT",word])
+                elif word[len(word) - 2] == "--" or word[:2] == "--":
+                    tokens.append(["DECREMENT", word])
                 else:
                     tokens.append(["IDENTIFIER", word])
                 

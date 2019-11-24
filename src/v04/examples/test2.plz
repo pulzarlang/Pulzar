@@ -3,7 +3,7 @@ include math;
 func add : x, y {
 	return x + y;
 }
-var x = "Brian Turza";
-run add : 5, 10;
-echo "hello generation";
-print 5 * (5 + 3) / 2;
+int x = 0;
+for x :: x < 10 :: x++ {
+	echo x ** 2 / (2 * x ** 2 - x);
+}
