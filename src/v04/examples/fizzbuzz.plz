@@ -1,5 +1,4 @@
 Program Console;
-
 int x;
 
 for x :: x < 100 :: x++ 

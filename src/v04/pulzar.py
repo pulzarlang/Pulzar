@@ -64,7 +64,7 @@ def main():
 
         parse = mparser.Parser(tokens,True)
         ast = parse.parse()
-        print("Abstract Syntax Tree")
+        print("Abstract Syntax Tree:")
         print(ast)
         print(17*"-" + "CODE GENERATION" + 18*"-")
         obj = generator.Generation(ast)

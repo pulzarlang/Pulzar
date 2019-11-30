@@ -15,7 +15,7 @@ circle : a;
 print "Enter name:";
 input str b;
 print_name : b;
-int x = 0;
+int x;
 while x != 10 {
     int x = x + 1;
 }

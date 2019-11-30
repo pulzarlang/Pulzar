@@ -41,7 +41,7 @@ class Parser(object):
                 self.parse_variable(self.tokens[self.token_index:len(self.tokens)], False)
             #Check if it was already dececlared
                         
-            elif token_type == "IDENTIFIER" and token_value in self.symbol_table:
+            elif token_type == "IDENTIFIER" and token_value in self.symbol_table and self.tokens[self.token_index + 1][0] != "COLON":
                 self.parse_variable(self.tokens[self.token_index:len(self.tokens)], False, False)
 
 
@@ -64,7 +64,7 @@ class Parser(object):
             elif token_type == "KEYWORD" and token_value == "return":
                 self.parse_return(self.tokens[self.token_index:len(self.tokens)])
             
-            elif token_type == "KEYWORD" and token_value == "run":
+            elif token_type == "IDENTIFIER" and self.tokens[self.token_index + 1][0] == "COLON" and self.tokens[self.token_index - 1][0] != "KEYWORD":
                 self.find_func(self.tokens[self.token_index:len(self.tokens)])
             
             elif token_type == "COMMENT":
@@ -79,6 +79,7 @@ class Parser(object):
         if count == 0:
              self.error_message("Program Error: \nType must be included in code")
         
+        print(self.symbol_table)
         return self.ast
         
     def parse_include(self,token_stream):
@@ -174,6 +175,7 @@ class Parser(object):
         ast = { 'variable_declaration': [] }
         value = ""
         c = False
+        c1 = False
         
         for token in range(0,len(token_stream)):
 
@@ -186,6 +188,7 @@ class Parser(object):
             elif token == 0 and token_stream[2][0] == "SEMIC":
                 #add var type E.g.: int, str, bool, float ...
                 ast['variable_declaration'].append({'type' : token_value})
+                ast['variable_declaration'].append({'name' : token_stream[1][1]})
 
                 if token_value in ["int", "float", "var"]:
                     ast['variable_declaration'].append({ "value": "0" })
@@ -196,20 +199,21 @@ class Parser(object):
                 elif token_value == "bool":
                     ast['variable_declaration'].append({ "value": "None" })
                     #Breaks so it wont repeat
-                    break
-            #If a builtin function or math is stroed in variable
+                c1 = True
+                break
+            #If a builtin function or math is stored in variable
             elif token == 1 and token_stream[3][0] == "MATH" or token_stream[3][1] == "input":
                 pass
-
 
             elif token == 1 and token_type == "IDENTIFIER":
                     ast['variable_declaration'].append({ 'name': token_value })
                     
                 #Invalid variable name error
-            elif token == 1 and token_type != "IDENTIFIER":
-                    msg = ("NameErrorP\nInvalid variable name '"+token_value+"'")
+            elif token == 1 and token_type in ["IDENTIFIER", "DATATYPE"]:
+                    msg = ("NameError\nInvalid variable name '"+token_value+"'")
                     self.error_message(msg)	
                 #Invalid operator Error
+    
             elif token == 2 and token_type not in ["OPERATOR", "INCREMENT_OPERATOR"]:
                     msg = "OperatorError\nInvalid operator '{}'".format (token_value)
                     self.error_message(msg)
@@ -241,9 +245,10 @@ class Parser(object):
                 value = self.get_token_value(token_value)
                 print(value)
 
-            elif token == 3 and token_type not in ['INTEGER', 'OPERATOR', 'STRING', 'IDENTIFIER','LATEX',"COMPLEX_NUMBER"]:
-                msg = "ValueError at line:\nInvalid Variable value '"+token_value+"'"
-                self.error_message(msg)
+            
+            #elif token == 3 and token_type not in ['INTEGER', 'OPERATOR', 'STRING', 'IDENTIFIER','LATEX',"COMPLEX_NUMBER"]:
+            #    msg = "ValueError at line:\nInvalid Variable value '"+token_value+"'"
+            #    self.error_message(msg)
 
             elif token > 3:
                 value += token_value
@@ -263,13 +268,13 @@ class Parser(object):
         elif type(value) == complex:
             try: value = complex(value)
             except: pass
-            
-        ast['variable_declaration'].append({'value' : value})
+        if c1 == False:
+            ast['variable_declaration'].append({'value' : value})
             
         if inScope == False:
             self.ast['main_scope'].append(ast)
 
-        self.symbol_table.append([ast['variable_declaration'][1]['name'], ast['variable_declaration'][2]['value']])
+        self.symbol_table.append(['variable', ast['variable_declaration'][1]['name'], ast['variable_declaration'][2]['value']])
 
         self.token_index += tokens_checked
             
@@ -579,7 +584,7 @@ class Parser(object):
                 ast['loop'].append({'increment' : "1"})
             
             elif token == 7 and token_type in ["DECREMENT", "IDENTIFIER"]:
-                ast['loop'].append({'increment' : "-1"})
+                ast['loop'].append({'increment' : "1"})
                        
             tokens_checked += 1
 
@@ -623,7 +628,9 @@ class Parser(object):
         self.token_index += tokens_checked
         
         ast['function_declaration'].append({'argument' : value})
-        
+
+        self.symbol_table.append(['function', ast['function_declaration'][0]['name'], ast['function_declaration'][1]['argument']])
+
         self.ast['main_scope'].append(ast)
 
         return [ast,tokens_checked]
@@ -681,27 +688,36 @@ class Parser(object):
         
         name = ""
         argument = ""
-        
+        ast = {'find_function' : []}
+
         for token in range(0,len(token_stream)):
 
             token_type = token_stream[tokens_checked][0]
             token_value = token_stream[tokens_checked][1]
             
-            if  token_type == "SEMIC":break
+            if token == 4:
+                print(token_value)
 
-            elif token == 1  and token_type != "IDENTIFIER":
-                self.error_message("Error")
+            if  token_type == "SEMIC": break
 
-            elif token == 1 and token_type == "IDENTIFIER":
-                name = token_value
+            elif token == 1 and token_type != "COLON":
+                self.error_message("SyntaxError:")
             
-            elif token == 3 and token_type in ["IDENTIFIER","INTEGER","STRING","BOOLEAN"]:
+            elif token == 2:
                 argument = token_value
             
+            elif token > 2 and token_type in ['COMMA','INTEGER', 'STRING', 'BOOL']:
+                argument += token_value
 
-            tokens_checked+=1
+            tokens_checked += 1
 
         self.token_index += tokens_checked
+
+        ast['find_function'].append({'argument' : argument})
+        self.ast['main_scope'].append(ast)
+
+        return [ast, tokens_checked]
+
 #--------------------------------------------------------------------------
 
     def error_message(self,msg):
