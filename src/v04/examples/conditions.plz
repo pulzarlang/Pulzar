@@ -1,0 +1,7 @@
+Program Console;
+int x = 5;
+float y = 5.25;
+if x == 5 {
+    int x = y;
+    echo x;
+}

@@ -1,10 +1,17 @@
 Program Console;
+
+func add : x, y { \\ Comment
+	return x + y; 
+}
+func power : n 
+{ 
+	return n ** n / 2 ** n;
+}
 int x;
-func add : x, y {
-	return x + y;
+for x :: x < 10 :: x++ {
+	power : x;
 }
-func power : n {
-	return n ** n;
+if x > 10000 {
+	int x = 74;
+	echo j;
 }
-add : 5, 10;
-power : 3;

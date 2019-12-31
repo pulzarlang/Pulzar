@@ -6,14 +6,15 @@ class LoopObject(object):
 
     def transpile(self):
         for ast in self.ast:
-            print(ast)
             try: keyword = ast['keyword']
             except: pass
             
             try: name = ast['name']
             except: pass
 
-            try: start_value = ast['start_value']
+            try: 
+                start_value = ast['start_value']
+                if start_value == None: start_value = "0"
             except: pass
 
             try: end_value = ast['end_value']

@@ -2,7 +2,7 @@ from Lib.fmath import *
 from Obj.varObject import VarObject
 from Obj.builtinObject import BuiltinObject
 from Obj.loopObject import LoopObject
-from Obj.functionObject import FuncObject
+from Obj.functionObject import FuncObject, RunFuncObject
 from Obj.conditionalObject import ConditionalObject
 from Obj.libObject import libObject
 from Obj.returnObject import ReturnObject
@@ -25,7 +25,7 @@ class Generation(object):
 
             if self.check_ast('conditional_statement', ast):
                 condition = ConditionalObject(ast)
-                self.transpiled_code += condition.transpile() + "\n"
+                self.transpiled_code += condition.transpile() + "\n" + "\t"
 
             if self.check_ast('builtin_function', ast):
                 builtin = BuiltinObject(ast)
@@ -38,6 +38,10 @@ class Generation(object):
             if self.check_ast('function_declaration', ast):
                 func = FuncObject(ast)
                 self.transpiled_code += func.transpile() + "\n" + "\t"
+            
+            if self.check_ast('call_function', ast):
+                func = RunFuncObject(ast)
+                self.transpiled_code += func.transpile() + "\n"
             
             if self.check_ast('return', ast):
                 return_ = ReturnObject(ast)

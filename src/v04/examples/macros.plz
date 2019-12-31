@@ -1,13 +1,8 @@
 Program Console;
 macros 
 {
-    redefine @echo : print(_var arg_) {
-	    echo arg;
-    }
-    define int x {
-        x = 10;
-    }
-    
+    define : x, 10;
+    redefine : @echo, "say ";
 }
-print("hello world")
-print(x)
+say "macros working"
+say x

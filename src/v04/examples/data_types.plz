@@ -1,5 +1,7 @@
-Program Console;
-include math;
-int x = 5;
-x = 10
+Program Console; \\ Comment
+int x;
+char j = 'j';
+float pi = 3.14;
 str name = "Brian Turza";
+bool isTrue = False;
+

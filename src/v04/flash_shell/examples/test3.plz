@@ -1,6 +1,0 @@
-Program Console;
-
-func hello : var name {
-    echo "Hello" + "\s" + name;
-}
-run hello : "Brian";

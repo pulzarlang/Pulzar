@@ -8,7 +8,7 @@ constants = {'pi' : 3.1415926535897932384626433832795,
             'phi' : 1.61803398874989484820,
             'e' : 2.7182818284590452353602874713527,
             'googol' : 10 ** 100,
-            'gravity' : 9.80665,
+            'g' : 9.80665,
 }
 
 class MathModule(object):
@@ -41,11 +41,18 @@ class MathModule(object):
         n2 = n1.replace("j","i")
         return n2
 
-    def sin(self,n):
-        return sin(n)
+    def sin(self,n): return sin(n)
     
-    def cos(self,n):
-        return cos(n)
+    def cos(self,n): return cos(n)
 
-    def tan(self,n):
-        return tan(n)
+    def tan(self,n): return tan(n)
+    
+    def arcsin(self, n): return arcsin(n)
+
+    def integral(self, n):
+        """
+        input: intrgral(e ** x / sin : (x) dx) 
+        output: 
+        """
+        #TODO Make both define and undefineid integral solver
+        pass

@@ -1,4 +1,0 @@
-Type Console;
-var 10 = x;
-var 5 = b;
-echo x + b;

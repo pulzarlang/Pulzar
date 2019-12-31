@@ -1,21 +1,5 @@
 Program Console;
 include math;
-
-func circle : r { 
-    echo pi * r ** 2;
-}
-
-func print_name : name 
-{
-    echo "Hello" + "\s" + name;
-}
-print "Enter r:";
-input int a;
-circle : a;
-print "Enter name:";
-input str b;
-print_name : b;
 int x;
-while x != 10 {
-    int x = x + 1;
-}
+complex a = 1i ** 1i;
+echo a;

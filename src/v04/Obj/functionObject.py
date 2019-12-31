@@ -21,7 +21,7 @@ class RunFuncObject(object):
     
     def __init__(self, source_ast):
         self.exec_str = ""
-        self.ast = source_ast['main_scope']
+        self.ast = source_ast['call_function']
     
     def transpile(self):
         name = ""
