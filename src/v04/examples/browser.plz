@@ -1,0 +1,5 @@
+Program Browser;
+\\ Gets the 
+var text = get_name : ('text');
+
+echo text;

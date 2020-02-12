@@ -8,7 +8,7 @@ import Lib.fmath as fmath
 import math
 import os
 
-class Parser(object):
+class Parser:
 
     def __init__(self,token_stream,include):
         self.tokens = token_stream
@@ -218,7 +218,7 @@ class Parser(object):
                 var_decl = True
                 break
 
-            elif token == 0:
+            elif token == 0 and token_stream[2][0] != "SEMIC":
                 ast['variable_declaration'].append({'type' : token_value})
                 typ8 = token_value
 
@@ -243,15 +243,13 @@ class Parser(object):
                 value = token_value + "j"
                 c = True
             
-            elif token == 3 and token_type not in ["COMPLX_NUMBER", "STRING"]:
+            elif token == 3 and token_type not in ["COMPLEX_NUMBER", "STRING"]:
                 value = str(token_value)
             
-            elif token > 3 and token_type != "COMPLEX_NUMBER":
+            elif token > 3 and token_type != "COMPLEX_NUMBER" and token_value == "None":
+                print(value, type(value))
                 value += str(token_value)
             
-            else:
-                value += token_value + "j"
-                c = True
 
             tokens_checked += 1
         #Throws an error when the value is diffrent than declared type

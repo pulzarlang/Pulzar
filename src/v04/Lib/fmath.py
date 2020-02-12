@@ -11,9 +11,9 @@ constants = {'pi' : 3.1415926535897932384626433832795,
             'g' : 9.80665,
 }
 
-class MathModule(object):
+class MathModule:
 
-    def __init__(self,):
+    def __init__(self):
         pass
 
     def factorial(self,n):

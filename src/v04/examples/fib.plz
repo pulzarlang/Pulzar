@@ -2,7 +2,7 @@ Program Console;
 
 \\ Solution 1 using recrusive function:
 func fib : n {
-	if n == (1 || 2) { \\ If n = 1 or n = 2
+	if n == 1 or n == 2) { \\ If n = 1 or n = 2
 		return n;
 	}
 	else {

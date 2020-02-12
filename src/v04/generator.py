@@ -9,7 +9,7 @@ from Obj.returnObject import ReturnObject
 
 import math
 import os
-class Generation(object):
+class Generation:
     def __init__(self,source_ast):
         self.transpiled_code = ""
 
