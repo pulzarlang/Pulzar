@@ -13,7 +13,6 @@ import os
 import platform
 import sys
 import time
-
 #Check Platform
 #If windows
 if platform.system() == "Windows":

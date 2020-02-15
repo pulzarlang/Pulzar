@@ -6,6 +6,7 @@ from Obj.functionObject import FuncObject, RunFuncObject
 from Obj.conditionalObject import ConditionalObject
 from Obj.libObject import libObject
 from Obj.returnObject import ReturnObject
+from Obj.scopeObject import ScopeObject
 
 import math
 import os
@@ -25,7 +26,7 @@ class Generation:
 
             if self.check_ast('conditional_statement', ast):
                 condition = ConditionalObject(ast)
-                self.transpiled_code += condition.transpile() + "\n" + "\t"
+                self.transpiled_code += condition.transpile() + "\n"
 
             if self.check_ast('builtin_function', ast):
                 builtin = BuiltinObject(ast)
@@ -33,11 +34,11 @@ class Generation:
 
             if self.check_ast('loop', ast):
                 loop = LoopObject(ast)
-                self.transpiled_code += loop.transpile() + "\n" + "\t"
+                self.transpiled_code += loop.transpile() + "\n"
             
             if self.check_ast('function_declaration', ast):
                 func = FuncObject(ast)
-                self.transpiled_code += func.transpile() + "\n" + "\t"
+                self.transpiled_code += func.transpile() + "\n"
             
             if self.check_ast('call_function', ast):
                 func = RunFuncObject(ast)

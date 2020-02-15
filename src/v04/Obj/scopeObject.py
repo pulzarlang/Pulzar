@@ -1,9 +1,4 @@
-from Obj.varObject     import VariableObject
-from Obj.builtinObject import BuiltInFunctionObject
-from Obj.loopObject    import LoopObject
-from Obj.commentObject import CommentObject
-
-class ConditionObject():
+class ScopeObject:
 
     def __init__(self, ast, nesting_count):
 
@@ -13,17 +8,8 @@ class ConditionObject():
 
         self.nesting_count = nesting_count
 
-    def transpile_body(self, body_ast, nesting_count):
-        """ Transpile Body
-        
-        This method will use the body AST in order to create a python version of the tachyon
-        code for the body statement while managing indentations
+    def transpile_scope(self, body_ast, nesting_count):
 
-        return:
-            body_exec_string (str) : The python transpiled code
-        """
-        
-        # Holds the body executable string of the first statement
         body_exec_string = ""
 
         # Loop through each ast item in the body dictionary

@@ -4,5 +4,5 @@ var x = 5;
 if x == 5 {
     echo x * (x - 1);
 }
-complex a = 1i ** 1i;
-echo a;
+complex a = 1i;
+echo a ** a;
