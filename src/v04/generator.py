@@ -25,7 +25,7 @@ class Generation:
                 self.transpiled_code += var.transpile() + "\n"
 
             if self.check_ast('conditional_statement', ast):
-                condition = ConditionalObject(ast)
+                condition = ConditionalObject(ast, 1)
                 self.transpiled_code += condition.transpile() + "\n"
 
             if self.check_ast('builtin_function', ast):

@@ -4,6 +4,8 @@
 #Author : Brian Turza
 #Created : 14/9/2019
 """
+import shell
+
 import lexer
 import mparser
 import generator
@@ -26,8 +28,7 @@ def main():
         arg = sys.argv[1]
     except:
         pass
-        quit()
-        #shell()
+        shell.shell()
     #If file doesnt have .plz file extension, it will raise an error
     if arg[-4:] != ".plz":
         print("FileError with file '{}':\nMust be .plz file".format (sys.argv[1]))

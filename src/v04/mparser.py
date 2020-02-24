@@ -534,7 +534,6 @@ class Parser:
             ast['conditional_statement'].append({'condition': condition})
 
         self.token_index += tokens_checked - 1
-
         scope_tokens = self.get_scope(token_stream[tokens_checked:len(token_stream)])
 
         if isNested == False:
@@ -550,7 +549,7 @@ class Parser:
         for variable in self.symbol_table:
             if variable[0] == token: return variable[1]
 
-    def parse_loop(self, token_stream, inScope):
+    def parse_loop(self, token_stream, isNested):
         # for x :: x < 10 :: x++ {
         tokens_checked = 0
         value = ""
@@ -563,7 +562,7 @@ class Parser:
             token_type = token_stream[tokens_checked][0]
             token_value = token_stream[tokens_checked][1]
 
-            if token_type == "SCOPE" and token_value == "{":
+            if token_type == "SCOPE_DEFINIER" and token_value == "{":
                 break
 
             if token == 0:
@@ -610,9 +609,14 @@ class Parser:
 
             tokens_checked += 1
 
-        self.ast['main_scope'].append(ast)
+        self.token_index += tokens_checked - 1
+        scope_tokens = self.get_scope(token_stream[tokens_checked:len(token_stream)])
+        if isNested == False:
+            self.parse_scope(scope_tokens[0], ast, 'loop', False, False)
+        else:
+            self.parse_scope(scope_tokens[0], ast, 'loop', True, False)
 
-        self.token_index += tokens_checked
+        tokens_checked += scope_tokens[1]
 
         return [ast, tokens_checked]
 

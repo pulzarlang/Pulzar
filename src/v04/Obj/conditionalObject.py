@@ -5,9 +5,10 @@ from Obj.functionObject import FuncObject, RunFuncObject
 
 class ConditionalObject:
 
-    def __init__(self, source_ast):
+    def __init__(self, source_ast, nesting_count):
         self.exec_str = ""
         self.ast = source_ast['conditional_statement']
+        self.nesting_count = nesting_count
 
     def transpile(self):
         keyword = ""
@@ -19,17 +20,19 @@ class ConditionalObject:
             except: pass
             try: condition = ast['condition']
             except: pass
-            try: self.exec_string += self.transpile_scope(ast['scope'], self.nesting_count)
+            try: scope = ast['scope']
             except: pass
 
         if keyword != "else":
-            self.exec_str += keyword + " " + condition + ":"
+            self.exec_str += keyword + " " + condition + ":\n" + self.transpile_scope(scope, self.nesting_count, 2)
         else:
-            self.exec_str += "else:"
+            self.exec_str += "else:\n" + self.transpile_scope(scope, self.nesting_count, 0)
+
+
 
         return self.exec_str
 
-    def transpile_scope(self, body_ast, nesting_count):
+    def transpile_scope(self, body_ast, nesting_count, items):
 
         body_exec_string = ""
 
@@ -40,7 +43,7 @@ class ConditionalObject:
             if self.check_ast('variable_declaration', ast):
                 var_obj = VarObject(ast)
                 transpile = var_obj.transpile()
-                if self.should_dedent_trailing(ast, self.ast):
+                if self.should_dedent_trailing(ast, self.ast, items):
                     body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
                 else:
                     body_exec_string += ("   " * nesting_count) + transpile + "\n"
@@ -49,16 +52,7 @@ class ConditionalObject:
             if self.check_ast('builtin_function', ast):
                 gen_builtin = BuiltinObject(ast)
                 transpile = gen_builtin.transpile()
-                if self.should_dedent_trailing(ast, self.ast):
-                    body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
-                else:
-                    body_exec_string += ("   " * nesting_count) + transpile + "\n"
-
-            # This will parse comments within the body
-            if self.check_ast('comment', ast):
-                gen_comment = CommentObject(ast)
-                transpile = gen_comment.transpile()
-                if self.should_dedent_trailing(ast, self.ast):
+                if self.should_dedent_trailing(ast, self.ast, 2):
                     body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
                 else:
                     body_exec_string += ("   " * nesting_count) + transpile + "\n"
@@ -80,7 +74,7 @@ class ConditionalObject:
                     body_exec_string += ("   " * (nesting_count - 1)) + condition_obj.transpile()
 
             # This will parse nested conditional statement within the body
-            if self.check_ast('ForLoop', ast):
+            if self.check_ast('loop', ast):
                 # Increase nesting count because this is a condition statement inside a conditional statement
                 # Only increase nest count if needed
                 if self.should_increment_nest_count(ast, self.ast):
@@ -114,7 +108,7 @@ class ConditionalObject:
         except:
             return False
 
-    def should_dedent_trailing(self, ast, full_ast):
+    def should_dedent_trailing(self, ast, full_ast, items):
         """ Should dedent trailing
 
         This method will check if the ast item being checked is outside a conditional statement e.g.
@@ -133,9 +127,7 @@ class ConditionalObject:
             True  : If the code should not be indented because it is in current scope below current nested condition
             False : The item should not be dedented
         """
-
-        # This creates an array of only body elements
-        new_ast = full_ast[3]['body']
+        new_ast = full_ast[items]['scope']
         # This will know whether it should dedent
         dedent_flag = False
 
@@ -178,7 +170,7 @@ class ConditionalObject:
         statement_counts = 0
 
         # Loops through the body to count the number of conditional statements
-        for x in full_ast[3]['body']:
+        for x in full_ast[3]['scope']:
 
             # If a statement is found then increment statement count variable value by 1
             if self.check_ast('ConditionalStatement', x): statement_counts += 1
