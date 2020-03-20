@@ -13,12 +13,9 @@
 ## Printing 
 ### Echo function
 > Echo function after printing makes a new line
-<div style="background-color : #181818">
-    <code class="code1">
-    <span class="func">echo </span><span class="inq">"hello world"</span><span class="normal">;</span><br>
-    <span class="func">echo </span><span class="inq">"hello unviverse</span><span class="normal">;</span>
-</code>
-</div>
+
+    echo "hello world";
+    echo "hello universe";
 
 #### Output:
     hello world
@@ -26,10 +23,9 @@
 
 ### Print function
 > Print function after printing doesnt make a new line
-<div style="background-color : #181818">
-    <code class="code1">
-    <span class="func">print </span><span class="inq">Hello" + "\s"</span><span class="normal">;</span><br>
-    <span class="func">print </span><span class="inq">"Dave"</span><span class="normal">;</span>
+
+    print "Hello" + "\s";
+    print "Dave";
 </code>
 </div>
 
@@ -39,20 +35,14 @@
 ## Variable declaration
 #### Pulzar has both dynamic and static datatyping
 ### Dynamic typing
-<div style="background-color : #181818">
-    <code class="code1">
-        <span style="margin: 2px"></span><span class="func">var</span><span class="normal"> x</span><span class="symbol"> = </span><span class="num">10</span><span class="normal">;</span><br>
-    </code>
-</div>
+    var x = 10;
 
 ### Static typing
-<div style="background-color : #181818">
-    <code class="code1">
-            <span style="margin: 2px"></span><span class="func">str         </span><span class="normal">name</span><span class="symbol"> = </span><span class="inq">"Brian Turza"</span><span class="normal">;</span><br>
-        <span style="margin: 2px"></span><span class="func">int</span><span class="normal"> a</span><span class="symbol"> = </span><span class="num">14</span><span class="normal">;</span><br>
-        <span style="margin: 2px"></span><span class="func">bool</span><span class="normal"> isPulzar</span><span class="symbol"> = </span><span class="num">True</span><span class="normal">;</span><br>
-        </code>
-        </div>
+    
+    str name = "Brian Turza";
+    int age = 14;
+    bool isPulzar = True;
+    float pi = 3.14159;
 
 ## Comments
 ### Single line
