@@ -6,7 +6,7 @@ func fib : n {
 		return n;
 	}
 	else {
-		return fib : (n-1) + fib : (n - 2);
+		return fib : (n - 1) + fib : (n - 2);
 	}
 }
 \\ Solution 2 using loop:

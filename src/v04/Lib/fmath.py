@@ -3,6 +3,7 @@
 #Author : Brian Turza
 #Created : 20.8. 19
 from math import *
+#import numba as nb
 #Math constants
 constants = {'pi' : 3.1415926535897932384626433832795, 'phi' : 1.61803398874989484820, 'e' : 2.7182818284590452353602874713527, 'googol' : 10 ** 100, 'g' : 9.80665, }
 

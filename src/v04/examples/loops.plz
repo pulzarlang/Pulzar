@@ -1,0 +1,7 @@
+Program Console;
+int x;
+for x :: x < 10 :: x++ {
+    for y :: y < 10 :: y++ {
+        echo x * y;
+    }
+}

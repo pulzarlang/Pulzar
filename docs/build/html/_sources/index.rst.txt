@@ -6,17 +6,25 @@
 Welcome to Pulzar's documentation!
 ==================================
 
+Guide
+==================================
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+
+   license
+
 
 Header!
 ==================================
-Priniting hello world.
-..
-   >echo "hello world";
-   hello world
-..
+Priniting hello world:
+
+.. code-block:: pulzar
+   :caption: hello.plz
+   :name: this-py
+
+   echo "Hello reader";
+
 
 Indices and tables
 ==================

@@ -1,7 +1,8 @@
 """
-©Pulzar 2018-19
+©Pulzar 2018-20
 
 #Author : Brian Turza
+version: 0.4
 #Created : 14/9/2019
 """
 import shell

@@ -1,5 +1,4 @@
 Program Browser;
-\\ Gets the 
-var text = get_name : ('text');
 
-echo text;
+var text = get : ('text');
+echo "<p>",text,"</p>";

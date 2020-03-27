@@ -1,9 +1,6 @@
 Program Console;
-int x;
-if x == 0 {
-    echo "test";
-}
-for x :: x < 10 :: ++x {
-    int x = x * (x + 1);
-    echo x;
-}
+var x = 5;
+var y = 10;
+int z = x + y * 100;
+echo 'Z ma hodnotu:';
+echo z;

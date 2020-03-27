@@ -3,20 +3,34 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Pulzar's documentation!
+Pulzar 0.4 Documentation
+==================================
+
+Guide
 ==================================
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   introducion
+   license
+   Installation
+   Getting started
+   Echo, Print function
+   Variables
+   Conditional statments
+   loops
+   functions
 
 Header!
 ==================================
-Priniting hello world.
-..
-   >echo "hello world";
-   hello world
-..
+Priniting hello world:
+
+.. code-block:: pulzar
+   :caption: hello.plz
+   :name: this-py
+
+   echo "Hello reader";
+
 
 Indices and tables
 ==================

@@ -1,6 +1,9 @@
 """
-©Pulzar 2018-19
-Author: Brian Turza
+©Pulzar 2018-20
+
+#Author : Brian Turza
+version: 0.4
+#Created : 14/9/2019
 """
 import constants
 import Lib.fmath as fmath
@@ -287,29 +290,26 @@ class Parser:
 
     def get_scope(self, token_stream):
 
-        nesting_count = 1
+        nesting_count = 0
         tokens_checked = 0
         scope_tokens = []
 
         for token in token_stream:
-
             tokens_checked += 1
 
             token_value = token[1]
             token_type = token[0]
 
-            if token_type == "SCOPE_DEFINER" and token_value == "{":
+            if token_type == "SCOPE_DEFINIER" and token_value == "{":
                 nesting_count += 1
-            elif token_type == "SCOPE_DEFINER" and token_value == "}":
+            elif token_type == "SCOPE_DEFINIER" and token_value == "}":
                 nesting_count -= 1
-
             if nesting_count == 0:
                 scope_tokens.append(token)
                 break
 
             else:
                 scope_tokens.append(token)
-
         return [scope_tokens, tokens_checked]
 
     def parse_scope(self, token_stream, statement_ast, astName, isNested, macros):

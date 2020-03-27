@@ -43,6 +43,7 @@ class ConditionalObject:
             if self.check_ast('variable_declaration', ast):
                 var_obj = VarObject(ast)
                 transpile = var_obj.transpile()
+
                 if self.should_dedent_trailing(ast, self.ast, items):
                     body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
                 else:
@@ -81,23 +82,13 @@ class ConditionalObject:
                     nesting_count += 1
                 # Create conditional statement exec string
                 loop_obj = LoopObject(ast, nesting_count)
+                print(nesting_count)
                 body_exec_string += ("   " * (nesting_count - 1)) + loop_obj.transpile()
 
         return body_exec_string
 
     def check_ast(self, astName, ast):
-        """ Call and Set Exec
 
-        This method will check if the AST dictionary item being looped through has the
-        same key name as the `astName` argument
-
-        args:
-            astName (str)  : This will hold the ast name we are matching
-            ast     (dict) : The dict which the astName match will be done against
-        returns:
-            True    (bool) : If the astName matches the one in `ast` arg
-            False   (bool) : If the astName doesn't matches the one in `ast` arg
-        """
         try:
             # In some cases when method is called from should_Dedent_trailing metho ast
             # comes back with corret key but empty list value because it is removed. If
@@ -109,24 +100,6 @@ class ConditionalObject:
             return False
 
     def should_dedent_trailing(self, ast, full_ast, items):
-        """ Should dedent trailing
-
-        This method will check if the ast item being checked is outside a conditional statement e.g.
-
-        if a == 11 {
-            if name == "Ryan Maugin" {
-                print "Not it";
-            }
-            print "Hi"; <--- This is the code that should be dedented by 1 so when found will return true if dedent flag is true
-        }
-
-        args:
-            ast       (list) : The ConditionalStatement ast we are looking for
-            full_ast  (list) : The full ast being parsed
-        return:
-            True  : If the code should not be indented because it is in current scope below current nested condition
-            False : The item should not be dedented
-        """
         new_ast = full_ast[items]['scope']
         # This will know whether it should dedent
         dedent_flag = False
@@ -170,7 +143,7 @@ class ConditionalObject:
         statement_counts = 0
 
         # Loops through the body to count the number of conditional statements
-        for x in full_ast[3]['scope']:
+        for x in full_ast[2]['scope']:
 
             # If a statement is found then increment statement count variable value by 1
             if self.check_ast('ConditionalStatement', x): statement_counts += 1

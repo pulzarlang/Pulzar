@@ -1,3 +1,10 @@
+"""
+©Pulzar 2018-20
+
+#Author : Brian Turza
+version: 0.4
+#Created : 14/9/2019
+"""
 from Lib.fmath import *
 from Obj.varObject import VarObject
 from Obj.builtinObject import BuiltinObject
@@ -33,17 +40,17 @@ class Generation:
                 self.transpiled_code += builtin.transpile() + "\n"
 
             if self.check_ast('loop', ast):
-                loop = LoopObject(ast)
+                loop = LoopObject(ast, 1)
                 self.transpiled_code += loop.transpile() + "\n"
-            
+
             if self.check_ast('function_declaration', ast):
                 func = FuncObject(ast)
                 self.transpiled_code += func.transpile() + "\n"
-            
+
             if self.check_ast('call_function', ast):
                 func = RunFuncObject(ast)
                 self.transpiled_code += func.transpile() + "\n"
-            
+
             if self.check_ast('return', ast):
                 return_ = ReturnObject(ast)
                 self.transpiled_code += return_.transpile() + "\n"

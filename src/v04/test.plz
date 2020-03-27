@@ -1,8 +1,11 @@
 Program Console;
 include math;
 var x = 5;
+str name = "Brian";
 if x == 5 {
     echo x * (x - 1);
+    if name != "Jeff" {
+        echo "My name is Jeff";
+    }
 }
-complex a = 1i;
-echo a ** a;
+print "hi";

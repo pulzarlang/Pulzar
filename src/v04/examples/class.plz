@@ -11,7 +11,7 @@ class Person : object {
     }
 var Obj1 = Person.info : "Brian", 14;
 echo Obj1;
-|* Output:
+|** Output:
 My name is Brian
 I am 14 
 **|
