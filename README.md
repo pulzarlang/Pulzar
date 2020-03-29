@@ -5,7 +5,7 @@
 </div>
 <br><br>
 
-> Note that  is in early stage of development
+> Note that Pulzar is in early stage of development
 
 #### Pulzar supports both functional & OO programming. It is mostly dynamic language however you can make the code static.
 #### In future Pulzar will also support low level.
@@ -46,7 +46,7 @@
   input b;
   print_name : b;
 ```
-### Pulzar v.04 is working mostly on better AST and use of LLVM.
+### Pulzar v0.4 priority is to colaborate LLVM with it for speed.
 
 
 ## Features
