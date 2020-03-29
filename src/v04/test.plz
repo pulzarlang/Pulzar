@@ -1,11 +1,8 @@
 Program Console;
 include math;
-var x = 5;
-str name = "Brian";
-if x == 5 {
-    echo x * (x - 1);
-    if name != "Jeff" {
-        echo "My name is Jeff";
+func divide : a, b {
+    if b != 0 {
+        echo a / b;
     }
 }
-print "hi";
+divide : 10, 5;

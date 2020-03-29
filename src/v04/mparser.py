@@ -5,7 +5,6 @@
 version: 0.4
 #Created : 14/9/2019
 """
-import constants
 import Lib.fmath as fmath
 
 import math
@@ -59,14 +58,11 @@ class Parser:
             elif token_type == "KEYWORD" and token_value == "for":
                 self.parse_loop(token_stream[self.token_index:len(token_stream)], False)
 
-
             elif token_type == "KEYWORD" and token_value == "func":
                 self.parse_func(token_stream[self.token_index:len(token_stream)], False)
 
             elif token_type == "KEYWORD" and token_value == "return":
                 self.parse_return(token_stream[self.token_index:len(token_stream)], False)
-
-
 
             elif token_type == "COMMENT":
                 self.parse_comment(token_stream[self.token_index:len(token_stream)], False)
@@ -369,6 +365,11 @@ class Parser:
                 ast['scope'].append(function[0])
                 tokens_checked += function[1]
 
+            elif token_type == "KEYWORD" and token_value == "return":
+                return_statment = self.parse_return(token_stream[tokens_checked:len(token_stream)], True)
+                ast['scope'].append(return_statment[0])
+                tokens_checked += return_statment[1]
+
             elif token_type == "KEYWORD" and token_value == "run":
                 run = self.call_func(token_stream[tokens_checked:len(token_stream)], True)
                 ast['scope'].append(run[0])
@@ -620,7 +621,7 @@ class Parser:
 
         return [ast, tokens_checked]
 
-    def parse_func(self, token_stream, inScope):
+    def parse_func(self, token_stream, isNested):
         tokens_checked = 0
         value = ""
         ast = {'function_declaration': []}
@@ -631,8 +632,6 @@ class Parser:
             token_value = token_stream[tokens_checked][1]
 
             if token_type == "SCOPE_DEFINIER" and token_value == "{": break
-
-            if token_type == "SCOPE_DEFIENIER" and token_value == "}": break
 
             if token == 1 and token_type == "IDENTIFIER":
                 ast['function_declaration'].append({'name': token_value})
@@ -651,14 +650,20 @@ class Parser:
 
             tokens_checked += 1
 
-        self.token_index += tokens_checked
+        self.token_index += tokens_checked - 1
 
         ast['function_declaration'].append({'argument': value})
 
-        self.symbol_table.append(
-            ['function', ast['function_declaration'][0]['name'], ast['function_declaration'][1]['argument']])
+        scope_tokens = self.get_scope(token_stream[tokens_checked:len(token_stream)])
 
-        self.ast['main_scope'].append(ast)
+        if isNested == False:
+            self.parse_scope(scope_tokens[0], ast, 'function_declaration', False, False)
+        else:
+            self.parse_scope(scope_tokens[0], ast, 'function_declaration', True, False)
+
+        tokens_checked += scope_tokens[1]
+
+        self.symbol_table.append(['function', ast['function_declaration'][0]['name'], ast['function_declaration'][1]['argument']])
 
         return [ast, tokens_checked]
 

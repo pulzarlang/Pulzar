@@ -1,7 +1,6 @@
 from Obj.varObject import VarObject
 from Obj.builtinObject import BuiltinObject
 
-
 class LoopObject:
     
     def __init__(self, source_ast, nesting_count):
@@ -75,7 +74,7 @@ class LoopObject:
                 if self.should_increment_nest_count(ast, self.ast):
                     nesting_count += 1
                 # Create conditional statement exec string
-                condition_obj = Obj.conditionalObject.ConditionalObject(ast, nesting_count)
+                condition_obj = ConditionalObject(ast, nesting_count)
                 # The second nested statament only needs 1 indent not 2
                 if nesting_count == 2:
                     # Add the content of conditional statement with correct indentation

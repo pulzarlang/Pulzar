@@ -1,8 +1,7 @@
 from Obj.varObject import VarObject
 from Obj.builtinObject import BuiltinObject
 from Obj.loopObject import LoopObject
-from Obj.functionObject import FuncObject, RunFuncObject
-
+from Obj.returnObject import ReturnObject
 class ConditionalObject:
 
     def __init__(self, source_ast, nesting_count):
@@ -27,8 +26,6 @@ class ConditionalObject:
             self.exec_str += keyword + " " + condition + ":\n" + self.transpile_scope(scope, self.nesting_count, 2)
         else:
             self.exec_str += "else:\n" + self.transpile_scope(scope, self.nesting_count, 0)
-
-
 
         return self.exec_str
 
@@ -84,6 +81,14 @@ class ConditionalObject:
                 loop_obj = LoopObject(ast, nesting_count)
                 print(nesting_count)
                 body_exec_string += ("   " * (nesting_count - 1)) + loop_obj.transpile()
+
+            if self.check_ast('return', ast):
+                gen_return = ReturnObject(ast)
+                transpile = gen_return.transpile()
+                if self.should_dedent_trailing(ast, self.ast, 2):
+                    body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
+                else:
+                    body_exec_string += ("   " * nesting_count) + transpile + "\n"
 
         return body_exec_string
 

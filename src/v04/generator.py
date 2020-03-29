@@ -44,7 +44,7 @@ class Generation:
                 self.transpiled_code += loop.transpile() + "\n"
 
             if self.check_ast('function_declaration', ast):
-                func = FuncObject(ast)
+                func = FuncObject(ast, 1)
                 self.transpiled_code += func.transpile() + "\n"
 
             if self.check_ast('call_function', ast):
