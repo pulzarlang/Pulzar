@@ -19,7 +19,7 @@
   var bool = False;
   var x = 10;
   echo n;
-  if mod 2 == 0 {
+  if x mod 2 == 0 {
       echo "Yes";
       if x != 10 {
           echo "Not good";
