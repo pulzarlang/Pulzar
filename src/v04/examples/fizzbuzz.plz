@@ -3,13 +3,13 @@ int x;
 
 for x :: x < 100 :: x++ 
 {
-	if (x % 3) == 0 {
+	if (x mod 3) == 0 {
 		echo "Fizz";
 	}
-	else if (x % 5) == 0 {
+	else if (x mod 5) == 0 {
 		echo "Buzz";
 	}
-	else if (x % 3) == 0 || (x % 5) == 0 {
+	else if (x mod 3) == 0 || (x mod 5) == 0 {
 		echo "FizzBuzz";
 	}
 	else {

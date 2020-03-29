@@ -5,7 +5,7 @@
 </div>
 <br><br>
 
-> Note that  is in early stage of development
+> Note that Pulzar is in early stage of development
 
 #### Pulzar supports both functional & OO programming. It is mostly dynamic language however you can make the code static.
 #### In future Pulzar will also support low level.
@@ -19,13 +19,17 @@
   var bool = False;
   var x = 10;
   echo n;
-  if x != 10 {
-    echo "Not good";
+  if x mod 2 == 0 {
+      echo "Yes";
+      if x != 10 {
+          echo "Not good";
+      }
   }
-  var i;
+ 
+  var i, a;
   for i :: i < 10 :: ++i {
-    x = i ** 2 / (2**i - i);
-    echo x;
+      a = i ** 2 / (2**i - i);
+      echo x;
   }
   func circle : r { 
       echo pi * r ** 2;
@@ -35,14 +39,14 @@
   {
       echo "Hello" + "\s" + name;
   }
-  echo "Enter r:";
-  int a -> input;
-  run circle : a;
+  print "Enter r:";
+  input a;
+  circle : a;
   echo "Enter name:";
-  str b -> input;
-  run print_name : b;
+  input b;
+  print_name : b;
 ```
-### Pulzar v.04 is working mostly on better AST and use of LLVM.
+### Pulzar v0.4 priority is to colaborate LLVM with it for speed.
 
 
 ## Features
@@ -56,11 +60,13 @@ This are feautures what pulzar can do now:
 - [x] If statments
 - [x] Else statments
 - [x] Else if statments
+- [x] Nested Conditional statments
 - [x] For loops
 - [x] While loop
+- [x] Nested loops
 - [x] Functions 
 - [x] Function calls 
-- [ ] Math library ( working on it)
+- [ ] Math library
 - [ ] Imports libaries
 - [ ] Pointers
 - [ ] Macros
