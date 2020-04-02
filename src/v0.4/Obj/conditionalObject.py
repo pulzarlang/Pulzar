@@ -1,7 +1,8 @@
 from Obj.varObject import VarObject
 from Obj.builtinObject import BuiltinObject
-from Obj.loopObject import LoopObject
 from Obj.returnObject import ReturnObject
+import  Obj.loopObject
+
 class ConditionalObject:
 
     def __init__(self, source_ast, nesting_count):
@@ -78,8 +79,7 @@ class ConditionalObject:
                 if self.should_increment_nest_count(ast, self.ast):
                     nesting_count += 1
                 # Create conditional statement exec string
-                loop_obj = LoopObject(ast, nesting_count)
-                print(nesting_count)
+                loop_obj = Obj.loopObject.LoopObject(ast, nesting_count)
                 body_exec_string += ("   " * (nesting_count - 1)) + loop_obj.transpile()
 
             if self.check_ast('return', ast):

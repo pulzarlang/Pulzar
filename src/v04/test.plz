@@ -1,8 +1,0 @@
-Program Console;
-include math;
-func divide : a, b {
-    if b != 0 {
-        echo a / b;
-    }
-}
-divide : 10, 5;

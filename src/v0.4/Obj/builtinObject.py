@@ -20,7 +20,7 @@ class BuiltinObject(object):
             self.exec_str += "print(" + str(arg) + ", end='')"
 
         elif str(func) == 'input':
-            self.exec_str += "input(" + str(arg) + ")"
+            self.exec_str += "{}=input()".format (arg)
 
         elif str(func) == 'system':
             self.exec_str += "os.system(" + str(arg) + ")"

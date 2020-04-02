@@ -58,6 +58,9 @@ class Parser:
             elif token_type == "KEYWORD" and token_value == "for":
                 self.parse_loop(token_stream[self.token_index:len(token_stream)], False)
 
+            elif token_type == "KEYWORD" and token_value == "while":
+                self.parse_loop(token_stream[self.token_index:len(token_stream)], False)
+
             elif token_type == "KEYWORD" and token_value == "func":
                 self.parse_func(token_stream[self.token_index:len(token_stream)], False)
 
@@ -246,8 +249,7 @@ class Parser:
             elif token == 3 and token_type not in ["COMPLEX_NUMBER", "STRING"]:
                 value = str(token_value)
 
-            elif token > 3 and token_type != "COMPLEX_NUMBER" and token_value == "None":
-                print(value, type(value))
+            elif token > 3 and token_type != "COMPLEX_NUMBER":
                 value += str(token_value)
 
             tokens_checked += 1
@@ -521,8 +523,8 @@ class Parser:
             elif token == 1:
                 condition = token_value
 
-            elif token > 1 and token <= 3:
-                condition += token_value
+            elif token > 1:
+                condition += token_value.replace("mod", "%")
 
             elif token == 1 and token_type == "SCOPE_DEFINIER":
                 msg = "CondtionalError:\nelse function doesnt take arguments"
@@ -553,6 +555,8 @@ class Parser:
     def parse_loop(self, token_stream, isNested):
         # for x :: x < 10 :: x++ {
         tokens_checked = 0
+        keyword = ""
+        condition = ""
         value = ""
         increment = ""
         var_decl = False
@@ -568,50 +572,64 @@ class Parser:
 
             if token == 0:
                 ast['loop'].append({'keyword': token_value})
+                keyword = token_value
 
-            if token == 1 and token_type in "IDENTIFIER":
+            if token == 1 and keyword == "while":
+                condition = token_value
+
+            if token == 1 and token_type in "IDENTIFIER" and keyword != "while":
                 self.get_token_value(token_value)
                 ast['loop'].append({'name': token_value})
                 ast['loop'].append({'start_value': self.get_token_value(token_value)})
 
-            elif token == 1 and token_type == "DATATYPE":
+            elif token == 1 and token_type == "DATATYPE" and keyword != "while":
                 # check variale declaration
                 if token_stream[token + 1][0] == "IDENTIFIER" and token_stream[token + 2][0] == "OPERATOR" and \
                         token_stream[token + 3][0] in ["INTEGER", "IDENTIFIER", ]:
                     ast['loop'].append({'name': token_value})
                     ast['loop'].append({'start_value': token_stream[token + 3][1]})
 
-            elif token == [2, 5] and token_type != "SEPARATOR":
+            elif token == [2, 5] and token_type != "SEPARATOR"  and keyword != "while":
                 msg = "SEPARATORError: at line:\nMust be '::'"
                 self.error_message(msg)
+
+            elif token == 2 and token_type in ["OPERATOR", "COMPARTION_OPERATOR"] and keyword == "while":
+                if token_value == "mod":
+                    condition += "%"
+                else:
+                    condition += token_value
+
+            elif token > 2 and keyword == "while":
+                condition += token_value
 
             # elif (token == 4 and token_value != str([ast['loop'][2]['start_value']])):
             # print(token_value, str([ast['loop'][2]['start_value']]))
             # msg = ("ValueError: at line:\nMust be same as ", [ast['loop'][2]['start_value']])
             # self.error_message(msg)
 
-            elif token == [4, 7] and token_type != "COMPARTION_OPERATOR":
+            elif token == [4, 7] and token_type != "COMPARTION_OPERATOR"  and keyword != "while":
                 msg = token_value + "CompertionError at line:\nMust be operator"
                 self.error_message(msg)
 
 
-            elif token in [5, 8] and token_type in ["INTEGER", "IDENTIFIER"]:
+            elif token in [5, 8] and token_type in ["INTEGER", "IDENTIFIER"]  and keyword != "while":
                 ast['loop'].append({'end_value': token_value})
 
-            elif token == [6, 9] and token_type != "SEPARATOR":
+            elif token == [6, 9] and token_type != "SEPARATOR"  and keyword != "while":
                 msg = "SeparatorError: at line:\nMust be '::'"
                 self.error_message(msg)
 
-            elif token == 7 and token_type in ["INCREMENT", "INDETIFIER"]:
+            elif token == 7 and token_type in ["INCREMENT", "INDETIFIER"]  and keyword != "while":
                 ast['loop'].append({'increment': "1"})
 
-            elif token == 7 and token_type in ["DECREMENT", "IDENTIFIER"]:
+            elif token == 7 and token_type in ["DECREMENT", "IDENTIFIER"] and keyword != "while":
                 ast['loop'].append({'increment': "1"})
 
             tokens_checked += 1
 
         self.token_index += tokens_checked - 1
         scope_tokens = self.get_scope(token_stream[tokens_checked:len(token_stream)])
+        if keyword == "while": ast['loop'].append({'condition': condition})
         if isNested == False:
             self.parse_scope(scope_tokens[0], ast, 'loop', False, False)
         else:
