@@ -1,6 +1,7 @@
 from Obj.varObject import VarObject
 from Obj.builtinObject import BuiltinObject
 from Obj.conditionalObject import ConditionalObject
+from Obj.loopObject import LoopObject
 from Obj.returnObject import ReturnObject
 
 class FuncObject(object):

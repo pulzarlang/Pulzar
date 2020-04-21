@@ -1,7 +1,9 @@
 Program Console;
-int x;
-for x :: x < 10 :: x++ {
-    for y :: y < 10 :: y++ {
-        echo x * y;
+func main : () {
+    for x :: x < 7 :: x++ {
+        for y :: y < 7 :: y++ {
+            echo x ** 2 * y ** 2 / (2 ** x + 2 ** y);
+        }
     }
 }
+main : ();

@@ -1,0 +1,3 @@
+Echo, Print function
+====================
+In pulzar you print things on screen with echo and print function.

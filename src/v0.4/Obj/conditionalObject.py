@@ -1,7 +1,7 @@
 from Obj.varObject import VarObject
 from Obj.builtinObject import BuiltinObject
 from Obj.returnObject import ReturnObject
-import  Obj.loopObject
+import Obj.loopObject
 
 class ConditionalObject:
 

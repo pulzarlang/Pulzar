@@ -1,4 +1,7 @@
 Program Browser;
 
-var text = get : ('text');
-echo "<p>",text,"</p>";
+var message = "Pulzar on browser";
+func main : () {
+    return "<h1>" + message + "</h1>";
+}
+

@@ -1,0 +1,11 @@
+Program Console;
+func main : () {
+    for i :: i < 5 :: i++ {
+        for j :: j < 5 :: j++ {
+            if (i + j) ** 2 > 2 ** i + 2 ** j {
+                echo "(", i, ",", j, ")", ":", (i + j) ** 2;
+            }
+        }
+    }
+}
+main : ();

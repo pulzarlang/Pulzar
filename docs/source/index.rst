@@ -6,31 +6,32 @@
 Pulzar 0.4 Documentation
 ==================================
 
+Welcome to Pulzar 0.4 documentation
+Pulzar is new experimental programming language. User can use dynamic typing with optional types.
+
 Guide
 ==================================
 
 .. toctree::
    :maxdepth: 2
-   introducion
-   license
-   Installation
-   Getting started
-   Echo, Print function
-   Variables
-   Conditional statments
-   loops
-   functions
 
-Header!
+   license.rst
+   getting-started.rst
+   echo-print-functions.rst
+   variables.rst
+   arrays.rst
+   conditional-statements.rst
+   for-loop.rst
+   while-loop.rst
+   functions.rst
+   oop.rst
+   macros.rst
+
+
+Introduction
 ==================================
-Priniting hello world:
-
-.. code-block:: pulzar
-   :caption: hello.plz
-   :name: this-py
-
-   echo "Hello reader";
-
+Pulzar is a experimental programming language created by Brian Turza.
+The syntax of pulzar was inspired by languages from static languages like C to dynamic ones like Python.
 
 Indices and tables
 ==================

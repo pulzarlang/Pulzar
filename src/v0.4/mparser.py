@@ -7,10 +7,6 @@ version: 0.4
 """
 import Lib.fmath as fmath
 
-import math
-import os
-
-
 class Parser:
 
     def __init__(self, token_stream, include):
@@ -19,6 +15,7 @@ class Parser:
         self.include = include
         self.ast = {'main_scope': []}
         self.symbol_table = []
+        self.isConsole = True
         self.token_index = 0
 
     def parse(self, token_stream):
@@ -67,6 +64,9 @@ class Parser:
             elif token_type == "KEYWORD" and token_value == "return":
                 self.parse_return(token_stream[self.token_index:len(token_stream)], False)
 
+            elif token_type == "KEYWORD" and token_value == "class":
+                self.parse_class(token_stream[self.token_index:len(token_stream)], False)
+
             elif token_type == "COMMENT":
                 self.parse_comment(token_stream[self.token_index:len(token_stream)], False)
 
@@ -89,7 +89,7 @@ class Parser:
         if count == 0:
             self.error_message("Program Error: \nType must be included in code")
 
-        return self.ast
+        return [self.ast, self.isConsole]
 
     def parse_include(self, token_stream, inScope):
 
@@ -109,7 +109,7 @@ class Parser:
                 ast['Include'].append({'libary': token_value})
 
             elif token == 1 and token_value not in list_lib:
-                msg = "IncludeError at line:\n'{}' is not definied".format(token_value)
+                msg = "IncludeError:\n'{}' is not definied".format(token_value)
                 self.error_message(msg)
 
             tokens_checked += 1
@@ -168,8 +168,10 @@ class Parser:
 
             if token_type == "SEMIC": break
 
-            if token == 1 and token_value == "Console":
+            elif token == 1 and token_value in ["Program", "Console", "Browser"]:
                 ast['program'].append({'type': token_value})
+                if token_value == "Browser":
+                    self.isConsole = False
 
             elif token == 1 and token_value not in ["Program", "Console", "Browser"]:
                 self.error_message("Program error: undefinied program '{}'".format(token_value))
@@ -651,11 +653,11 @@ class Parser:
 
             if token_type == "SCOPE_DEFINIER" and token_value == "{": break
 
-            if token == 1 and token_type == "IDENTIFIER":
+            if token == 1 and token_type in ["IDENTIFIER", "INNER_FUNC"]:
                 ast['function_declaration'].append({'name': token_value})
 
             elif token == 2 and token_type != "COLON":
-                self.error_message("Error:")
+                self.error_message("SyntaxError:\nCollon missing")
 
             elif token == 3 and token_value == "0":
                 value = token_value
@@ -682,6 +684,45 @@ class Parser:
         tokens_checked += scope_tokens[1]
 
         self.symbol_table.append(['function', ast['function_declaration'][0]['name'], ast['function_declaration'][1]['argument']])
+
+        return [ast, tokens_checked]
+
+    def parse_class(self, token_stream, isNested):
+        tokens_checked = 0
+        value = ""
+        ast = {'class': []}
+
+        for token in range(0, len(token_stream)):
+
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
+            if token_type == "SCOPE_DEFINIER" and token_value == "{": break
+
+            if token == 1 and token_type == "IDENTIFIER":
+                ast['class'].append({'name': token_value})
+
+            elif token == 2 and token_type != "COLON":
+                self.error_message(["SyntaxError:", "':' is missing"])
+
+            elif token == 3 and token_value == "object":
+                ast['class'].append({'argument': token_value})
+
+            tokens_checked += 1
+
+        self.token_index += tokens_checked - 1
+
+        ast['class'].append({'argument': value})
+
+        scope_tokens = self.get_scope(token_stream[tokens_checked:len(token_stream)])
+
+        if isNested == False:
+            self.parse_scope(scope_tokens[0], ast, 'class', False, False)
+        else:
+            self.parse_scope(scope_tokens[0], ast, 'class', True, False)
+
+        tokens_checked += scope_tokens[1]
+
+        self.symbol_table.append(['function', ast['class'][0]['name'], ast['class'][1]['argument']])
 
         return [ast, tokens_checked]
 
@@ -799,7 +840,8 @@ class Parser:
                 self.error_message("SyntaxError:")
 
             elif token == 2:
-                argument = token_value
+                if token_value == "();": argument = ""
+                else: argument = token_value
 
             elif token > 2 and token_type in ['COMMA', 'INTEGER', 'STRING', 'BOOL']:
                 argument += token_value

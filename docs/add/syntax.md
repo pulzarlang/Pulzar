@@ -1,14 +1,9 @@
 # Pulzar SYNTAX v0.4
 
-<link rel="stylesheet" type="text/css" href="code.css">
 
 ## Program definition
 ### Console
-<div style="background-color:#181818">
-    <code class="code1">
-        <span class="func">Program </span><span class="normal">Console; </span><br>
-    </code>
-</div>
+    Program Console;
 
 ## Printing 
 ### Echo function
@@ -26,8 +21,6 @@
 
     print "Hello" + "\s";
     print "Dave";
-</code>
-</div>
 
 #### Output:
     Hello Dave
@@ -46,18 +39,14 @@
 
 ## Comments
 ### Single line
-<div style="background-color : #181818">
-<code class="code1">
- <span class="comment">\\ This is a single line comment in Pulzar</span><br>
-</code>
-</div>
+    \\ This is a single line comment in Pulzar
+
 
 ### One/ Multy line comment
-<div style="background-color : #181818">
-<code class="code1">
- <span class="comment">|* <br> This is a multy line comment in Pulzar <br> *|</span><br>
-</code>
-</div>
+
+    |* This is a 
+    multi line comment
+     in Pulzar *|
 
 ## Input
     int x; |** define x = 0 **|
@@ -67,24 +56,16 @@
 
 
 ## Conditional Statments
-<div style="background-color : #181818">
-<code class="code1">
-    <span class="func">if</span><span class="normal"> condition<span> {</span><br>
-        <span style="margin-right:1.66rem"></span>        <span class="comment">|** do somthing ... **|    </span><br>
-        <span class="normal">}</span>
-        </code>
-</div>
+    if condition {
+        |** Do somthing... **|
+    }
 
 ## Repeated Evaluation: Loops
 ### For Loop:
-<div style="background-color : #181818">
-    <code class="code1">
-        <span class="func">int</span><span class="normal"> x;</span><br>
-        <span class="func">for</span><span class="normal"> x</span><span class="symbol"> :: </span><span class="normal">x</span><span class="symbol"> <= </span><span class="num">10</span><span class="symbol"> ::</span><span class="normal"> x++ {</span><br>
-        <span style="margin-right:1.66rem"></span>        <span class="func">echo</span><span class="normal"> x</span><span class="symbol"> **</span><span class="num"> 2</span><span class="normal">;</span><br>
-        <span class="normal">}</span>
-        </code>
-</div>
+    int x;
+    for x :: x < 10 :: x++ {
+        echo x ** 2;
+    }
 
 #### Output:
     0
@@ -97,29 +78,34 @@
     49
     64
     81
-    100
-
 ### While Loop
-<div style="background-color : #181818">
-    <code class="code1">
-        <span class="func">while</span><span class="normal"> condition<span> {</span><br>
-        <span style="margin-right:1.66rem"></span>                          <span class="comment">|** do somthing ... **|</span><br>
-        <span class="normal">}</span>
-        </code>
-</div>
+    while condtion {
+        |** Do somthing **|
+    }
 
 ## Function Declaration & Calling
 ### 1. Case
 ### Function Declaration
 > this function doesnt take any argument.
 
-    func test : 0 { 
-        echo "hello function";
+    func test : () {
+        int array = [1 , 3, 5, 7, 9];
+        int i;
+        for i :: i < 4 :: i++ {
+            echo (array[i] + 1) ** 2;
+        }
     }
 
 ### This is how function is called
-    run test;
+    test : ();
 
+#### Output:
+    4
+    16
+    36
+    64
+    100
+ 
 ### 2. Case
 
 ### Function Declaration
@@ -130,7 +116,7 @@
     }
 ### Function Calling
 
-    run hello : Brian;
+    hello : Brian;
 
 ## Classes, Objects & Methods
 #### Pulzar has Object Oriented Programming feautures
@@ -146,7 +132,7 @@
             echo "You are" + "\s" + this.age;
         }
     }
-    run Person.print : "Brian", 14;
+    Person.print : "Brian", 14;
 
 #### Output:
     Hello Brian

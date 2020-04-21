@@ -2,12 +2,12 @@ Program Console;
 
 class Person : object {
     func @identity : this, name, age {
-        str this->name = name;
-        int this->age = age;
-    } 
-    func info : this {
-        echo "My name is " + this.name;
-        echo "I am " + this.age;
+        str this.name = name;
+        int this.age = age;
     }
-var Obj1 = Person.info : "Brian", 14;
-echo Obj1;
+    func info : this {
+        echo "My name is" + this.name;
+        echo "I am"+ "\s" + this.age;
+    }
+}
+Person.info : "Brian", 14;

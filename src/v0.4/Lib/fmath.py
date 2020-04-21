@@ -28,7 +28,7 @@ class MathModule:
 
     def fib(self, n):
         n = int(n)
-        return ((1+sqrt(5))**n-(1-sqrt(5))**n)/(2**n*sqrt(5))
+        return ((1+sqrt(5))**n-(1-sqrt(5))**n)/(2**n*sqrt(5)) # ( (1 + √5)^n - (1 - √5)^n )/ (2^n * √5)
     
     def complex(self,n):
         #n = (5+3i) + (7i + 5) = 10 + 10i

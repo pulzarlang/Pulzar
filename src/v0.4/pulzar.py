@@ -10,12 +10,11 @@ import shell
 import lexer
 import mparser
 import generator
-#from flash_shell.main import shell
 
 import os
 import platform
 import sys
-import time
+from time import perf_counter
 #Check Platform
 #If windows
 if platform.system() == "Windows":
@@ -27,8 +26,7 @@ elif platform.system() == "linux" or platform.system() == "darwin":
 def main():
     try:
         arg = sys.argv[1]
-    except:
-        pass
+    except IndexError:
         shell.shell()
     #If file doesnt have .plz file extension, it will raise an error
     if arg[-4:] != ".plz":
@@ -46,7 +44,7 @@ def main():
             #Parser
             parse = mparser.Parser(tokens,False)
             ast = parse.parse(tokens)
-            obj = generator.Generation(ast)
+            obj = generator.Generation(ast[0], ast[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
             gen = obj.generate()
             exec(gen)
             quit()
@@ -65,12 +63,12 @@ def main():
         #Parser
         print(22*"-" + " PARSER " + 22*"-")
 
-        parse = mparser.Parser(tokens,True)
+        parse = mparser.Parser(tokens, True)
         ast = parse.parse(tokens)
         print("Abstract Syntax Tree:")
-        print(ast)
+        print(ast[0])
         print(17*"-" + "CODE GENERATION" + 18*"-")
-        obj = generator.Generation(ast)
+        obj = generator.Generation(ast[0], ast[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
         gen = obj.generate()
         print(gen)
         print("#"*21,"OUTPUT","#"*21)
@@ -78,6 +76,7 @@ def main():
 #---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    start_time = time.time()
+    start_time = perf_counter()
     main()
-    print("\nExecuted in: %s seconds" % (time.time() - start_time))
+    end_time = perf_counter()
+    print("\nExecuted in: %s seconds" % (end_time - start_time))

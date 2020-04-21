@@ -1,7 +1,7 @@
-<h1 align = 'center'> Pulzar programming language (v0.4)</h1>
+ <div align="center"><h1>Pulza v0.4</h1></div>
 
 <div align="center">
-  <strong>Pulzar is modern  programming language with both high and low level features.</strong>
+  <strong>Pulzar is new experimental programming language that aims on both dynamic and static data types. In future it would try to foucus on quantum computing and machine learning</strong>
 </div>
 <br><br>
 
@@ -48,7 +48,6 @@
 ```
 ### Pulzar v0.4 priority is to colaborate LLVM with it for speed.
 
-
 ## Features
 
 This are feautures what pulzar can do now:
@@ -56,11 +55,12 @@ This are feautures what pulzar can do now:
 - [x] input
 - [x] Variable declaration 
 - [x] Variable definition
+- [x] Array
 - [x] Math 
-- [x] If statments
-- [x] Else statments
-- [x] Else if statments
-- [x] Nested Conditional statments
+- [x] If statements
+- [x] Else statements
+- [x] Else if statements
+- [x] Nested Conditional statements
 - [x] For loops
 - [x] While loop
 - [x] Nested loops
@@ -70,4 +70,5 @@ This are feautures what pulzar can do now:
 - [ ] Imports libaries
 - [ ] Pointers
 - [ ] Macros
+- [ ] OOP
 

@@ -45,7 +45,6 @@ class Lexer:
                     return [matcher + word.partition(matcher)[-1].partition(matcher[0])[0] + matcher,word.partition(matcher)[-1].partition(matcher[0])[2],iter_count - 1]
                     break
 
-
     def tokenize(self):
         tokens = []
         source_code = self.source_code.split()
@@ -76,8 +75,7 @@ class Lexer:
             
             elif word in constants.INCREMENT_OPERATORS: tokens.append(["INCREMENT_OPERATOR", word])
 
-
-            elif re.match("[a-z]",word) or re.match("[A-Z]",word):
+            elif re.match("[a-z]", word) or re.match("[A-Z]", word):
                 if word[len(word) - 1] == ';':
                     tokens.append(["IDENTIFIER", word[:-1]])
                 elif word[len(word) - 1] == ",":
@@ -111,20 +109,23 @@ class Lexer:
                 else:
                     tokens.append(["INTEGER",word])
 
+            elif word[0] == "@":
+                tokens.append(["INNER_FUNC", word])
+
 
             elif word == ":": 
                 tokens.append(["COLON",":"])
 
             elif word == "::":
-                tokens.append(["SEPARATOR",word])
+                tokens.append(["SEPARATOR", word])
              
             
             
             elif word== "|**" or word[:3] == "|**" or word == "**|" or word[:-3] == "**|":
-                tokens.append(["COMMENT",word])
+                tokens.append(["COMMENT", word])
             
             elif word in "{}":
-                tokens.append(["SCOPE_DEFINIER",word])
+                tokens.append(["SCOPE_DEFINIER", word])
 
             elif ('"') in word: 
 

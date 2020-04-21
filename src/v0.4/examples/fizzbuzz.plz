@@ -15,3 +15,18 @@ for x :: x < 100 :: x++
 		echo x;
 	}
 }
+Program Console;
+int n;
+func fizzbuzz : (n) {
+    for i :: i <= n :: i++ {
+    	if i mod 2 == 0 {
+        	echo "Fizz";
+        } elseif i mod 3 ==0 {
+        	echo "Buzz";
+        } elseif i mod 2 ==0 and i mod 3 == 0 {
+        	echo "Fizzbuzz";
+        } else {
+        	echo i;
+        }
+    }
+}
