@@ -14,6 +14,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Variables" href="variables.html" />
     <link rel="prev" title="License" href="license.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -33,11 +34,42 @@
             
   <div class="section" id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<div class="literal-block-wrapper docutils container" id="this-py">
-<div class="code-block-caption"><span class="caption-text">hello.plz</span><a class="headerlink" href="#this-py" title="Permalink to this code">¶</a></div>
-<div class="highlight-pulzar notranslate"><div class="highlight"><pre><span></span> echo &quot;hello world&quot;;
+<p>In order to start using pulzar, you need download and install it on your device. You can donwnload pulzar on <a class="reference external" href="https://pulzar.org/web/download/">https://pulzar.org/web/download/</a> or just clone github repository.
+When you open pulzar, a ineractive console will pop up, where you can easily experiment with pulzar:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(c) Brian Turza 2018 - 20 Pulzar v0.4
+
+Welcome to
+
+     ____        __
+   / __ \__  __/ /___  ____ ______
+  / /_/ / / / / /_  / / __ `/ ___/
+ / ____/ /_/ / / / /_/ /_/ / /
+/_/    \__,_/_/ /___/\__,_/_/
+
+
+Type &#39;help&#39; for more information
+&gt;echo &quot;test&quot;;
+test
+&gt;
 </pre></div>
 </div>
+<p>You can exit interactive shell by typing exit().
+When you create .plz script and you want to run without shell, put name of file you want to run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>~$ pulzar test.plz
+</pre></div>
+</div>
+</div>
+<div class="section" id="hello-world">
+<h1>Hello world<a class="headerlink" href="#hello-world" title="Permalink to this headline">¶</a></h1>
+<p>Making hello world in pulzar is really simple:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Program</span> <span class="n">Console</span><span class="p">;</span>
+<span class="n">echo</span> <span class="s2">&quot;hello world&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This will result hell world.</p>
+<p>if you want to see all tools and how pulzar works add -t argument after filename:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>~$ pulzar test.plz -t
+</pre></div>
 </div>
 </div>
 
@@ -61,6 +93,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#hello-world">Hello world</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variables.html">Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays.html">Array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conditional-statements.html">Control Flow: Conditional statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="for-loop.html">Control Flow: For loops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="while-loop.html">Control Flow: While loops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Functions: defiinition and calling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oop.html">OOP: Classes and &#64;identity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="macros.html">Macros</a></li>
 </ul>
 
 <div class="relations">
@@ -68,6 +109,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="license.html" title="previous chapter">License</a></li>
+      <li>Next: <a href="variables.html" title="next chapter">Variables</a></li>
   </ul></li>
 </ul>
 </div>

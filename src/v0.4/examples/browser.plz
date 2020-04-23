@@ -1,7 +1,6 @@
 Program Browser;
-
-var message = "Pulzar on browser";
-func main : () {
-    return "<h1>" + message + "</h1>";
+set-port 4000;
+var arr = [ 'brian' , 'test', 't' ];
+for i :: i < 3 :: i++ {
+    echo "<h3>", i, ":", arr[i], "</h3>";
 }
-

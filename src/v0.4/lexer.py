@@ -163,9 +163,8 @@ class Lexer:
                 else:
                     tokens.append(["BRACKET",word])
 
-            elif  word[:1] == "[" or  word[len(word) - 1] == "]" or word == "[" or word == "]" or word in "()":
+            elif word[:1] == "[" or  word[len(word) - 1] == "]" or word == "[" or word == "]" or word == "];" or word in "()":
                 if word[:-1] == ";" or word[:-1] == ",":
-                    tokens.append(["ARRAY",word[:-1]])
                     tokens.append(["ARRAY",word[:-1]])
                 else:
                     tokens.append(["ARRAY", word])

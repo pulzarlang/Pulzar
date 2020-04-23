@@ -17,7 +17,6 @@ Guide
 
    license.rst
    getting-started.rst
-   echo-print-functions.rst
    variables.rst
    arrays.rst
    conditional-statements.rst
