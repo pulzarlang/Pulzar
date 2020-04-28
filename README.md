@@ -1,4 +1,4 @@
- <div align="center"><h1>Pulza v0.4</h1></div>
+ <div align="center"><h1>Pulzar Programming language v0.4</h1></div>
 
 <div align="center">
   <strong>Pulzar is new experimental programming language that aims on both dynamic and static data types. In future it would try to foucus on quantum computing and machine learning</strong>
