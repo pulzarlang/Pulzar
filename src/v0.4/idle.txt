@@ -1,2 +1,0 @@
-x = input('enter:')
-print(x * x);
