@@ -48,7 +48,7 @@ def shell():
                     command += "\n" + temp
                 stack += command + "\n"
 
-            elif "if" in command or "if" in command or  "else" in command or "for" in command or "while" and "{" in command:
+            elif "if" in command or "if" in command or "else" in command or "for" in command or "while" and "{" in command:
                 temp = ""
                 while temp != "}":
                     temp = input(" ")

@@ -1,5 +1,5 @@
 Program Browser;
-set-port 4000;
+set-port 8080;
 var arr = [ 'brian' , 'test', 't' ];
 for i :: i < 3 :: i++ {
     echo "<h3>", i, ":", arr[i], "</h3>";

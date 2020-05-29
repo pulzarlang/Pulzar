@@ -1,0 +1,4 @@
+Program Console;
+include math;
+include "examples/functions.plz";
+test : 5, 10;

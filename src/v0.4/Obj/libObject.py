@@ -1,13 +1,20 @@
 class libObject(object):
 
-    def __init__(self):
+    def __init__(self, source_ast):
         self.exec_str = ""
+        self.ast = source_ast['Include']
+        self.file = False
 
-    def transpile_include(self,libary):
-        self.exec_str = "from "+libary+" import *" + "\n"
-        return self.exec_str
-        
-    def transpile_math(self,value):
-        self.exec_str += value + "\n"
-        
-        return self.exec_str
+    def transpile(self):
+        for ast in self.ast:
+            try: lib = ast['libary']
+            except: pass
+
+        if '"' in lib:
+            self.exec_str = lib.replace('"', '')
+            self.file = True
+        else:
+            self.exec_str = "from " + lib + " import *"
+
+
+        return [self.exec_str, self.file]

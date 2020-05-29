@@ -1,3 +1,6 @@
 Program Console;
-var x = 1/2;
-complex 1i ** x;
+include math;
+int x = 0 - 2;
+complex a = 1i + 3;
+complex b = 5 + 13i;
+echo a * b;

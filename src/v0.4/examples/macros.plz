@@ -1,8 +1,5 @@
 Program Console;
 macros 
 {
-    define : x, 10;
-    redefine : @echo, "say ";
+    define X, 10;
 }
-say "macros working"
-say x

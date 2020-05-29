@@ -1,7 +1,7 @@
 Program Console;
-int x = 5;
-float y = 5.25;
-if x == 5 {
-    int x = y;
-    echo x;
+int n = 10;
+if n == 10 {
+    echo n ** 2;
+} else {
+    echo n * 5;
 }

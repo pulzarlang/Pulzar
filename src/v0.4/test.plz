@@ -1,10 +1,10 @@
 Program Console;
-include math;
 str command;
 while command != "exit" {
     print ">>>";
     input command;
     if command == "help" {
-        echo "help commands:";
+        echo "help";
     }
+
 }

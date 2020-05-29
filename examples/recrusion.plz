@@ -1,4 +1,3 @@
-
 Program Console;
 int n;
 func fib : n {

@@ -1,25 +1,8 @@
 Program Console;
-
-\\ Solution 1 using recrusive function:
 func fib : n {
-	if n == 1 or n == 2) { \\ If n = 1 or n = 2
+	if n <= 2 {
 		return n;
-	}
-	else {
-		return fib : (n - 1) + fib : (n - 2);
-	}
+	} return fib : (n - 1) + fib : (n - 2);
 }
-\\ Solution 2 using loop:
-func fib2 : n 
-{
-	int m;
-	while n > 1 {
-		m = n;
-		n = m + n;
-	}
-	echo n;
-}
-print "Enter number:";
-input int n;
-echo fib;
-echo fib2;
+echo "test";
+fib : 2;

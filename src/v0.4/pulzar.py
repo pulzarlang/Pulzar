@@ -5,7 +5,7 @@
 version: 0.4
 #Created : 14/9/2019 (this version)
 """
-import shell
+
 
 import lexer
 import mparser
@@ -27,6 +27,7 @@ def main():
     try:
         arg = sys.argv[1]
     except IndexError:
+        import shell
         shell.shell()
     #If file doesnt have .plz file extension, it will raise an error
     if arg[-4:] != ".plz":
@@ -47,10 +48,10 @@ def main():
             obj = generator.Generation(ast[0], ast[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
             gen = obj.generate()
             exec(gen)
-            quit()
+            return
 
     if sys.argv[2] == "-t" or sys.argv[2] == "--t":
-        with open(sys.argv[1], "r") as f:
+        with open(sys.argv[1], "r", encoding="utf-8") as f:
             code = f.read()
         print("ORIGINAL CODE:")
         print(code)
@@ -73,6 +74,35 @@ def main():
         print(gen)
         print("#"*21,"OUTPUT","#"*21)
         exec(gen)
+
+    elif sys.argv[2] == "-c" or sys.argv[2] == "--compile":
+        with open(sys.argv[1], "r", encoding="utf-8") as f:
+            code = f.read()
+        print("ORIGINAL CODE:")
+        print(code)
+        # Lexer
+        print("-------------- LEXICAL ANALYSYS ---------------------\n")
+        lex = lexer.Lexer(code)
+
+        tokens = lex.tokenize()
+        print(tokens)
+        # Parser
+        print(22 * "-" + " PARSER " + 22 * "-")
+
+        parse = mparser.Parser(tokens, True)
+        ast = parse.parse(tokens)
+        print("Abstract Syntax Tree:")
+        print(ast[0])
+        print(17 * "-" + "CODE GENERATION" + 18 * "-")
+        obj = generator.Generation(ast[0], ast[1], True)  # 1 parameter: ast; 2 parameter: isConsole (True or False)
+        gen = obj.generate()
+        print(gen)
+        print("#" * 21, "OUTPUT", "#" * 21)
+        f = open(sys.argv[1][:-4] + ".cpp", 'w')
+        f.write(gen)
+        f.close()
+        os.system('g++ {filename}.cpp -o {filename}'.format(filename=sys.argv[1][:-4]))
+        print("Compilation successful")
 #---------------------------------------------------------------------------
 
 if __name__ == "__main__":

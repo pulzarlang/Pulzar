@@ -1,7 +1,14 @@
-Program Console; \\ Comment
-int x;
-char j = 'j';
-float pi = 3.14;
-str name = "Brian Turza";
-bool isTrue = False;
-
+Program Console;
+include math;
+var DynamicType;
+int x = 5! + 5;
+float pi = 3.14159;
+complex n = 3 + 5i;
+str name = "Brian";
+char letter = 'B';
+bool isPulzar = True;
+float a = √2 + √3;
+a = 5 + 3 * 5;
+complex i = 5i + 3;
+complex j = 7 - 4i;
+echo i * j;

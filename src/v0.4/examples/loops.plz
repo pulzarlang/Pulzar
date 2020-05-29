@@ -1,9 +1,9 @@
 Program Console;
-func main : () {
-    for x :: x < 7 :: x++ {
-        for y :: y < 7 :: y++ {
-            echo x ** 2 * y ** 2 / (2 ** x + 2 ** y);
-        }
+float g = 9.81;
+int i = 0;
+int n = 5;
+for i :: i < n :: i++ {
+    for j :: j < n :: j++ {
+        echo i;
     }
 }
-main : ();

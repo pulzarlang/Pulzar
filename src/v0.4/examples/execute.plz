@@ -1,0 +1,3 @@
+Program Console;
+str code = "echo 5 + 5 * 2;";
+execute code;

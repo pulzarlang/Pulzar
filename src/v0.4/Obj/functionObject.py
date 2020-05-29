@@ -38,18 +38,26 @@ class FuncObject(object):
                 var_obj = VarObject(ast)
                 transpile = var_obj.transpile()
                 if self.should_dedent_trailing(ast, self.ast, items):
-                    body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
+                    body_exec_string += ("    " * (nesting_count - 1)) + transpile + "\n"
                 else:
-                    body_exec_string += ("   " * nesting_count) + transpile + "\n"
+                    body_exec_string += ("    " * nesting_count) + transpile + "\n"
 
             # This will parse built-in within the body
             if self.check_ast('builtin_function', ast):
                 gen_builtin = BuiltinObject(ast)
                 transpile = gen_builtin.transpile()
                 if self.should_dedent_trailing(ast, self.ast, 2):
-                    body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
+                    body_exec_string += ("    " * (nesting_count - 1)) + transpile[0] + "\n"
                 else:
-                    body_exec_string += ("   " * nesting_count) + transpile + "\n"
+                    body_exec_string += ("    " * nesting_count) + transpile[0] + "\n"
+
+            if self.check_ast('return', ast):
+                gen_return = ReturnObject(ast)
+                transpile = gen_return.transpile()
+                if self.should_dedent_trailing(ast, self.ast, 2):
+                    body_exec_string += ("    " * (nesting_count - 1)) + transpile + "\n"
+                else:
+                    body_exec_string += ("    " * nesting_count) + transpile + "\n"
 
             # This will parse nested conditional statement within the body
             if self.check_ast('conditional_statement', ast):
@@ -62,10 +70,10 @@ class FuncObject(object):
                 # The second nested statament only needs 1 indent not 2
                 if nesting_count == 2:
                     # Add the content of conditional statement with correct indentation
-                    body_exec_string += "   " + condition_obj.transpile()
+                    body_exec_string += "    " + condition_obj.transpile()
                 else:
                     # Add the content of conditional statement with correct indentation
-                    body_exec_string += ("   " * (nesting_count - 1)) + condition_obj.transpile()
+                    body_exec_string += ("    " * (nesting_count - 1)) + condition_obj.transpile()
 
             # This will parse nested conditional statement within the body
             if self.check_ast('loop', ast):
@@ -75,7 +83,7 @@ class FuncObject(object):
                     nesting_count += 1
                 # Create conditional statement exec string
                 loop_obj = LoopObject(ast, nesting_count)
-                body_exec_string += ("   " * (nesting_count - 1)) + loop_obj.transpile()
+                body_exec_string += ("    " * (nesting_count - 1)) + loop_obj.transpile()
 
         return body_exec_string
 
@@ -93,7 +101,8 @@ class FuncObject(object):
 
     def should_dedent_trailing(self, ast, full_ast, items):
 
-        new_ast = full_ast[items]['scope']
+        new_ast = full_ast[len(full_ast) - 1]['scope']
+        new_ast = full_ast[len(full_ast) - 1]['scope']
         # This will know whether it should dedent
         dedent_flag = False
 
@@ -101,8 +110,8 @@ class FuncObject(object):
         # the dedent flag to 'true'
         for x in new_ast:
 
-            # When a conditional stateemenet AST is found set the dedent trailing to true
-            if self.check_ast('function_delcaration', x):
+            # When a conditional statemenet AST is found set the dedent trailing to true
+            if self.check_ast('conditional_statement', x):
                 dedent_flag = True
 
             if ast == x and dedent_flag == True:
@@ -113,9 +122,8 @@ class FuncObject(object):
     def should_increment_nest_count(self, ast, full_ast):
         # Counts of the number of statements in that one scope
         statement_counts = 0
-
         # Loops through the body to count the number of conditional statements
-        for x in full_ast[2]['scope']:
+        for x in full_ast[len(full_ast) - 1]['scope']:
             # If a statement is found then increment statement count variable value by 1
             if self.check_ast('loop', x): statement_counts += 1
             # If the statement being checked is the one found then break

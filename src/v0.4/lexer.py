@@ -47,33 +47,44 @@ class Lexer:
 
     def tokenize(self):
         tokens = []
-        source_code = self.source_code.split()
-
+        source_code =  re.findall(r'\S+|\n', self.source_code) #Split code to words including '\n'
         source_index = 0
 
         for source_index in range(len(source_code)):
             
             word = source_code[source_index]
-
             if "\n" in word:
-                tokens.append(["NEWLINE",word])
+                tokens.append(["NEWLINE", word])
             
-            elif word in constants.KEYWORDS: tokens.append(["KEYWORD",word])
+            elif word in constants.KEYWORDS: tokens.append(["KEYWORD", word])
 
-            elif word in constants.DATATYPE: tokens.append(["DATATYPE",word])
+            elif word in constants.DATATYPE: tokens.append(["DATATYPE", word])
 
-            elif word in constants.BUILT_IN: tokens.append(["BUILT_IN_FUNCTION",word])
+            elif word in constants.BUILT_IN: tokens.append(["BUILT_IN_FUNCTION", word])
             
-            elif word in constants.MATH: tokens.append(["MATH_FUNCTION",word])
+            elif word in constants.MATH: tokens.append(["MATH_FUNCTION", word])
 
 
-            elif word in constants.OPERATORS and word[:2] not in ["++", "--"]: tokens.append(["OPERATOR",word])
+            elif word in constants.OPERATORS and word[:2] not in ["++", "--"] and word != "√": tokens.append(["OPERATOR",word])
+
+            elif word == "√" or "√" in word:
+                if word[len(word) - 1] == ";":
+                    tokens.append(["SQUARE_ROOT", word[1:-1]])
+                else:
+                    tokens.append(["SQUARE_ROOT", word[1:]])
+
             
             elif word in constants.COMPARTION_OPERATORS: tokens.append(["COMPARTION_OPERATOR", word])
             
             elif word in constants.LOGICAL_OPERATORS: tokens.append(["LOGIC_OPERATOR", word])
             
             elif word in constants.INCREMENT_OPERATORS: tokens.append(["INCREMENT_OPERATOR", word])
+
+            elif word in constants.BOOLEAN or word[:-1] in constants.BOOLEAN:
+                if word[len(word) - 1] == ";":
+                    tokens.append(["BOOLEAN", word[:-1]])
+                else:
+                    tokens.append(["BOOLEAN", word])
 
             elif re.match("[a-z]", word) or re.match("[A-Z]", word):
                 if word[len(word) - 1] == ';':
@@ -118,19 +129,15 @@ class Lexer:
 
             elif word == "::":
                 tokens.append(["SEPARATOR", word])
-             
             
-            
-            elif word== "|**" or word[:3] == "|**" or word == "**|" or word[:-3] == "**|":
-                tokens.append(["COMMENT", word])
+            elif word in ["|**", r"\\"] or word[:3] in ["|**", r"\\"] or word in ["**|", r"\\"] or word[:-3] in ["**|", r"\\"]:
+                tokens.append(["COMMENT", r'\\'])
             
             elif word in "{}":
                 tokens.append(["SCOPE_DEFINIER", word])
 
-            elif ('"') in word: 
-
+            elif ('"') in word:
                 matcherReturn = self.getMatcher('"', source_index, source_code)
-                
                 if matcherReturn[1] == '': tokens.append(["STRING", matcherReturn[0].replace("\s"," ")])
 
                 else:
@@ -143,7 +150,6 @@ class Lexer:
                     pass
             
             elif ("'") in word:
-
                 matcherReturn = self.getMatcher("'", source_index, source_code)
                 
                 if matcherReturn[1] == '': tokens.append(["STRING", matcherReturn[0].replace("\s"," ")])
@@ -164,8 +170,8 @@ class Lexer:
                     tokens.append(["BRACKET",word])
 
             elif word[:1] == "[" or  word[len(word) - 1] == "]" or word == "[" or word == "]" or word == "];" or word in "()":
-                if word[:-1] == ";" or word[:-1] == ",":
-                    tokens.append(["ARRAY",word[:-1]])
+                if word[len(word) - 1] == ";" or word[len(word) - 1] == ",":
+                    tokens.append(["ARRAY", word[:-1]])
                 else:
                     tokens.append(["ARRAY", word])
                 
@@ -179,5 +185,4 @@ class Lexer:
                 tokens.append(["COMMA",","])
 
             source_index += 1
-
         return tokens
