@@ -1,14 +1,14 @@
  <div align="center"><h1>Pulzar Programming language v0.4</h1></div>
 
 <div align="center">
-  <strong>Pulzar is new experimental programming language that aims on both dynamic and static data types. In future it would try to foucus on quantum computing and machine learning</strong>
+  <strong>Pulzar is new experimental programming language that has flexible syntax and gives freedom to the programmer. In future it would try to foucus on quantum computing.</strong>
 </div>
 <br><br>
 
 > Note that Pulzar is in early stage of development
 
-#### Pulzar supports both functional & OO programming. It is mostly dynamic language however you can make the code static.
-#### In future Pulzar will also support low level.
+#### Pulzar supports both functional & OO programming. It supports both static and dynamic typing. The staticlly typed variables have strong typing.
+#### The latest version can be both runnned at run time or be compiled to executable
 
 ## Example of Pulzar v0.4:
 ```pulzar
@@ -16,7 +16,7 @@
   include math;
  |** This is comment **|
   int n = 5!;
-  var bool = False;
+  var boolean = False;
   var x = 10;
   echo n;
   if x mod 2 == 0 {
@@ -48,6 +48,8 @@
 ```
 ### Pulzar v0.4 priority is to colaborate LLVM with it for speed.
 
+
+
 ## Features
 
 This are feautures what pulzar can do now:
@@ -55,7 +57,7 @@ This are feautures what pulzar can do now:
 - [x] input
 - [x] Variable declaration 
 - [x] Variable definition
-- [x] Array
+- [x] Arrays
 - [x] Math 
 - [x] If statements
 - [x] Else statements
@@ -66,9 +68,11 @@ This are feautures what pulzar can do now:
 - [x] Nested loops
 - [x] Functions 
 - [x] Function calls 
-- [ ] Math library
-- [ ] Imports libaries
+- [x] Math library
+- [x] Imports libaries & files
 - [ ] Pointers
 - [ ] Macros
 - [ ] OOP
 
+## Contribiution
+All contribution will be highly appreciated and might be rewarded.
