@@ -46,7 +46,6 @@
   input b;
   print_name : b;
 ```
-### Pulzar v0.4 priority is to colaborate LLVM with it for speed.
 
 
 
