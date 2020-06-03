@@ -130,8 +130,10 @@ class Lexer:
             elif word == "::":
                 tokens.append(["SEPARATOR", word])
             
-            elif word in ["|**", r"\\"] or word[:3] in ["|**", r"\\"] or word in ["**|", r"\\"] or word[:-3] in ["**|", r"\\"]:
-                tokens.append(["COMMENT", r'\\'])
+            elif word == "|**" or word[:3] == "|**" or word == "**|" or word[:-3] == "**|":
+                tokens.append(["COMMENT", word])
+            elif word == r"\\" or word[:3] == r"\\" or word[:-3] == r"\\":
+                tokens.append(["COMMENT", r"\\"])
             
             elif word in "{}":
                 tokens.append(["SCOPE_DEFINIER", word])

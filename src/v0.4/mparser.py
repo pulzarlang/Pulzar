@@ -43,9 +43,6 @@ class Parser:
                 self.parse_decl_variable(token_stream[self.token_index:len(token_stream)], False)
             # Check if it was already dececlared
 
-            elif token_type == "IDENTIFIER" and self.tokens[self.token_index + 1][1] == "=" or token_type == "IDENTIFIER" and self.tokens[self.token_index + 1][0] == "INCREMENT_OPERATOR":
-                self.parse_variable(token_stream[self.token_index:len(token_stream)], False)
-
             elif token_type == "BUILT_IN_FUNCTION":
                 self.parse_builtin(token_stream[self.token_index:len(token_stream)], False)
 
@@ -87,6 +84,11 @@ class Parser:
             except:
                 pass
 
+            try:
+                if token_type == "IDENTIFIER" and self.tokens[self.token_index + 1][1] == "=" or token_type == "IDENTIFIER" and self.tokens[self.token_index + 1][0] == "INCREMENT_OPERATOR":
+                    self.parse_variable(token_stream[self.token_index:len(token_stream)], False)
+            except IndexError: pass
+
             if token_type == "UNDEFINIED":
                 # TODO Identify better errors
                 self.error_message("SyntaxError: \n Undefinied")
@@ -95,7 +97,8 @@ class Parser:
 
         # If no Program declaration is found in code, calls a error message
         if count == 0:
-            self.error_message("Program Error: \nP must be PROGRAM in code")
+            msg = "SyntaxError at line {}:\nProgram must be difinied".format(self.lines)
+            self.error_message(msg, token_stream, self.token_index)
 
         return [self.ast, self.isConsole]
 
@@ -667,7 +670,10 @@ class Parser:
                 ast['builtin_function'].append({'function': token_value})
 
             elif token == 1 and token_type == "IDENTIFIER" and token_value not in constants:
-                value = token_value #self.get_token_value(token_value)
+                if token_stream[0][1] == "execute":
+                    value = self.get_token_value(token_value)
+                else:
+                    value = str(token_value)
 
             elif token == 1 and token_type == "IDENTIFIER" and token_value in constants:
                 value = "constants['{}']".format(token_value)
@@ -690,7 +696,10 @@ class Parser:
                 value += str(token_value.replace('^', '**'))
 
             elif token > 1 and token_type == "IDENTIFIER" and token_value not in constants:
-                value += str(token_value)
+                if token_stream[0][1] == "execute":
+                    value += self.get_token_value(token_value)
+                else:
+                    value += str(token_value)
 
             elif token > 1 and token_type == "IDENTIFIER" and token_value in constants:
                 value += "constants['{}']".format(token_value)
@@ -940,7 +949,8 @@ class Parser:
                 ast['function_declaration'].append({'name': token_value})
 
             elif token == 2 and token_type != "COLON":
-                self.error_message("SyntaxError at line"+ self.lines +":\n':' is missing")
+                msg = "SyntaxError at line "+ str(self.lines) +":\n':' is missing"
+                self.error_message(msg, token_stream, token)
 
             elif token == 3 and token_value == "0":
                 value = token_value
@@ -1166,7 +1176,7 @@ class Parser:
         tokens_checked = 1
         length = 0
         for token in range(len(token_stream)):
-            if token_stream[token][0] in ["SEMIC", "NEWLINE"]: break
+            if token_stream[token][0] == "NEWLINE": break
             tokens_checked += 1
 
         print(msg)

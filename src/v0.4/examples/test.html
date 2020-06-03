@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>HTML Form for Pulzar language</title>
 </head>
 <body>
-<form action="browser.plz">
-<input type="text" name="text">
-<button type='submit'>Submit</button>
-</form>
+<div align="center" style="margin-top:10%">
+    <form method="POST" enctype="multipart/form-data" action="browser.plz">
+        <label for="Username:">Username:</label>
+        <input type="text" name="username">
+        <br>
+        <label for="Password">Password:</label>
+        <input type="password" name="password">
+        <br>
+        <button type='submit'>Submit</button>
+    </form>
+</div>
 </body>
 </html>

@@ -5,11 +5,15 @@
 version: 0.4
 #Created : 14/9/2019
 """
+import cgi
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from io import StringIO
 import contextlib
 import sys
 
+isConsole = True
+plz_output = ""
+PORT = 8080
 @contextlib.contextmanager
 def stdoutIO(stdout=None):
     old = sys.stdout
@@ -27,30 +31,84 @@ def execute(code):
             return "Error occured in your code"
     return s.getvalue()
 
-def exec_plz(code):
+def exec_plz(code, isServer):
     import lexer
     import mparser
     lex = lexer.Lexer(code)
     tokens = lex.tokenize()
     parse = mparser.Parser(tokens, False)
     ast = parse.parse(tokens)
-    gen = Generation(ast[0], ast[1]).generate()
+    if isServer:
+        gen = Generation(ast[0], ast[1]).generate_browser()
+    else:
+        gen = Generation(ast[0], ast[1]).generate()
     return gen
 
 #------------- PROGRAM BROWSER ----------
 class Serv(BaseHTTPRequestHandler):
 
+    def _set_headers(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+    def do_HEAD(self):
+        self._set_headers()
+
     def do_GET(self):
+        error = False
+        plz = False
+        if self.path == '/':
+            self.path = '/index.html'
+
+        elif self.path[-1:] == "/":
+            self.path += '/index.html'
+
+        if self.path[-4:] == ".plz":
+            plz = True
+
+        elif "?" in self.path and ".plz" in self.path:
+            from urllib.parse import urlparse, parse_qs
+            parsed_url = urlparse(self.path)
+            GET_tokens = parse_qs(parsed_url.query)
+            plz = True
+            self.path = parsed_url.path
+        try:
+            file_to_open = open(self.path[1:]).read()
             self.send_response(200)
-            self.send_header('content-type', 'text/html')
-            self.end_headers()
-            stdout = "Hello Brian!"
-            output = ''
-            output += "<html>"
-            output += "<head><title>Pulzar web</title></head>"
-            output += f"<body>{stdout}</body>"
-            output += "</html>"
-            self.wfile.write(output.encode())
+        except:
+            file_to_open = "<!DOCTYPE html>\n"
+            file_to_open += "<html>\n"
+            file_to_open += "<head><title>HTTP ERROR 404 - Page not found</title></head>\n"
+            file_to_open += "<body>\n"
+            file_to_open += "<h1>Error 404 Page not found</h1>\n"
+            file_to_open += "</body>\n"
+            file_to_open += "</html>\n"
+            self.send_response(404)
+            error = True
+        self.end_headers()
+        if plz and error == False:
+            gen_py = exec_plz(file_to_open, True)
+            pulzar_output = execute(gen_py)
+            output = '<!DOCTYPE html>\n'
+            output += "<html>\n"
+            output += "<head><title>Pulzar web</title></head>\n"
+            output += "<body>{}</body>\n".format(pulzar_output)
+            output += "</html>\n"
+            self.wfile.write(bytes(output, 'utf-8'))
+        else:
+            self.wfile.write(bytes(file_to_open, 'utf-8'))
+
+    def do_POST(self):
+        self._set_headers()
+        form = cgi.FieldStorage(
+            fp=self.rfile,
+            headers=self.headers,
+            environ={'REQUEST_METHOD': 'POST'}
+        )
+        value = form.getvalue("username")
+
+        self.wfile.write(bytes(f"<html><body><h1>{value}</h1></body></html>", 'utf-8'))
+
 #--------------------------------------------------------------------------
 
 class Generation:
@@ -61,8 +119,64 @@ class Generation:
 
         self.source_ast = source_ast['main_scope']
 
+    def generate_browser(self):
+        from Obj.varObject import VarObject
+        from Obj.builtinObject import BuiltinObject
+        from Obj.loopObject import LoopObject
+        from Obj.functionObject import FuncObject, RunFuncObject
+        from Obj.conditionalObject import ConditionalObject
+        from Obj.libObject import libObject
+        from Obj.returnObject import ReturnObject
+        from Obj.macrosObject import MacrosObject
+        for ast in self.source_ast:
+
+            if self.check_ast('variable_declaration', ast):
+                var = VarObject(ast)
+                self.transpiled_code += var.transpile() + "\n"
+
+            if self.check_ast('conditional_statement', ast):
+                condition = ConditionalObject(ast, 1)
+                self.transpiled_code += condition.transpile() + "\n"
+
+            if self.check_ast('builtin_function', ast):
+                builtin = BuiltinObject(ast)
+                code = builtin.transpile()
+                if code[1] == True:
+                    gen = exec_plz(code[0], False)
+                    self.transpiled_code += "print(" + execute(gen) + ")\n"
+                else:
+                    self.transpiled_code += code[0] + "\n"
+
+            if self.check_ast('loop', ast):
+                loop = LoopObject(ast, 1)
+                self.transpiled_code += loop.transpile() + "\n"
+
+            if self.check_ast('function_declaration', ast):
+                func = FuncObject(ast, 1)
+                self.transpiled_code += func.transpile() + "\n"
+
+            if self.check_ast('call_function', ast):
+                func = RunFuncObject(ast)
+                x = ast['call_function']
+                if x[0]['name'] == "set-port":
+                    global PORT
+                    PORT = int(x[1]['argument'])
+                else:
+                    self.transpiled_code += func.transpile() + "\n"
+
+            if self.check_ast('return', ast):
+                return_ = ReturnObject(ast)
+                self.transpiled_code += return_.transpile() + "\n"
+
+        global plz_output
+        plz_output = execute(self.transpiled_code)
+
+        return self.transpiled_code
+
 
     def generate(self):
+        global isConsole
+        isConsole = self.isConsole
         if self.isConsole == True and self.compile == False:
             from Obj.varObject import VarObject
             from Obj.builtinObject import BuiltinObject
@@ -80,7 +194,7 @@ class Generation:
                     if filename[1] == True:
                         with open(filename[0], 'r') as f:
                             code = f.read()
-                        gen = exec_plz(code.replace('"', ''))
+                        gen = exec_plz(code.replace('"', ''), False)
                         self.transpiled_code += gen
                     else:
                         self.transpiled_code += filename[0] + "\n"
@@ -98,7 +212,7 @@ class Generation:
                     code = builtin.transpile()
                     if code[1] == True:
                         code[0] = "Program Console;\n" + code[0]
-                        gen = exec_plz(code[0])
+                        gen = exec_plz(code[0].replace('"', ''), False)
                         self.transpiled_code += gen + "\n"
                     else:
                         self.transpiled_code += code[0] + "\n"
@@ -126,53 +240,17 @@ class Generation:
             return self.transpiled_code
 
         elif self.isConsole == False and self.compile == False:
-            from Obj.varObject import VarObject
-            from Obj.builtinObject import BuiltinObject
-            from Obj.loopObject import LoopObject
-            from Obj.functionObject import FuncObject, RunFuncObject
-            from Obj.conditionalObject import ConditionalObject
-            from Obj.libObject import libObject
-            from Obj.returnObject import ReturnObject
-            from Obj.macrosObject import MacrosObject
+            from Obj.functionObject import RunFuncObject
             for ast in self.source_ast:
-                if self.check_ast('variable_declaration', ast):
-                    var = VarObject(ast)
-                    self.transpiled_code += var.transpile() + "\n"
-
-                if self.check_ast('conditional_statement', ast):
-                    condition = ConditionalObject(ast, 1)
-                    self.transpiled_code += condition.transpile() + "\n"
-
-                if self.check_ast('builtin_function', ast):
-                    builtin = BuiltinObject(ast)
-                    code = builtin.transpile()
-                    if code[1] == True:
-                            gen = exec_plz(code[0])
-                            self.transpiled_code += "print(" + execute(gen) + ")\n"
-                    else:
-                        self.transpiled_code += code[0] + "\n"
-
-                if self.check_ast('loop', ast):
-                    loop = LoopObject(ast, 1)
-                    self.transpiled_code +=  loop.transpile() + "\n"
-
-                if self.check_ast('function_declaration', ast):
-                    func = FuncObject(ast, 1)
-                    self.transpiled_code += func.transpile() + "\n"
-
                 if self.check_ast('call_function', ast):
                     func = RunFuncObject(ast)
-                    self.transpiled_code += func.transpile() + "\n"
-
-                if self.check_ast('return', ast):
-                    return_ = ReturnObject(ast)
-                    self.transpiled_code += return_.transpile() + "\n"
-
-                output = execute(self.transpiled_code)
-                httpd = HTTPServer(('localhost', 8080), Serv)
-                httpd.serve_forever()
-
-            return self.transpiled_code
+                    x = ast['call_function']
+                    if x[0]['name'] == "set-port":
+                        global PORT
+                        PORT = int(x[1]['argument'])
+            print(f"* Pulzar Server running at: localhost:{PORT}")
+            httpd = HTTPServer(('localhost', PORT), Serv)
+            httpd.serve_forever()
 
         elif self.compile == True:
             from cpp_Obj.varObject import VarObject
@@ -211,7 +289,7 @@ class Generation:
                     builtin = BuiltinObject(ast)
                     code = builtin.transpile()
                     if code[1] == True:
-                        gen = exec_plz(code[0])
+                        gen = exec_plz(code[0], False)
                         body += "\t" + gen + "\n"
                     else:
                         body += "\t" + code[0] + "\n"

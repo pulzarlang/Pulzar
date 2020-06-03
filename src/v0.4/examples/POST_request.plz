@@ -1,0 +1,7 @@
+Program Console;
+set_port : 8080;
+
+var username = POST : 'username';
+str password = GET : 'password';
+
+echo username, password;

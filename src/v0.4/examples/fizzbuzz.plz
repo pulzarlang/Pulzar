@@ -1,32 +1,14 @@
 Program Console;
-var x = 0;
-for x :: x < 100 :: x++ 
-{
-	if (x mod 3) == 0 {
-		echo "Fizz";
-	}
-	elseif (x mod 5) == 0 {
-		echo "Buzz";
-	}
-	elseif (x mod 3) == 0 or (x mod 5) == 0 {
-		echo "FizzBuzz";
-	}
-	else {
-		echo x;
-	}
-}
-Program Console;
 int n;
-func fizzbuzz : (n) {
-    for i :: i <= n :: i++ {
-    	if i mod 2 == 0 {
-        	echo "Fizz";
-        } elseif i mod 3 ==0 {
-        	echo "Buzz";
-        } elseif i mod 2 ==0 and i mod 3 == 0 {
-        	echo "Fizzbuzz";
-        } else {
-        	echo i;
-        }
+for i :: i <= n :: i++
+{
+    if i mod 2 == 0 {
+       	echo "Fizz";
+    } elseif i mod 3 ==0 {
+       	echo "Buzz";
+    } elseif i mod 2 == 0 and i mod 3 == 0 {
+    echo "Fizzbuzz";
+    } else {
+        echo i;
     }
 }
