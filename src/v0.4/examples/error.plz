@@ -1,5 +1,4 @@
 Program Console;
-var x = 10;
-var n;
-echo "enter num:";
-input n;
+int x;
+float x = 3.14;
+string x = "test";

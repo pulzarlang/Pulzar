@@ -6,7 +6,6 @@ version: 0.4
 #Created : 14/9/2019 (this version)
 """
 
-
 import lexer
 import mparser
 import generator
@@ -21,23 +20,23 @@ if platform.system() == "Windows":
     os.system("title Pulzar v0.4")
 #If linux or mac os
 elif platform.system() == "linux" or platform.system() == "darwin":
-    sys.stdout.write("\x1b]2; Pulzar v0.4\x07")
+    sys.stdout.write("\x1b]2;Pulzar v0.4\x07")
 
 def main():
-    try:
-        arg = sys.argv[1]
-    except IndexError:
+    arguments_length = len(sys.argv)
+    if arguments_length == 1:
         import shell
         shell.shell()
+
+    arg = sys.argv
+
     #If file doesnt have .plz file extension, it will raise an error
-    if arg[-4:] != ".plz":
-        print("FileError with file '{}':\nMust be .plz file".format (sys.argv[1]))
+    if arg[1][-4:] != ".plz":
+        print("FileError at file '{}':\nMust be .plz file".format (sys.argv[1]))
         quit()
     # Looks for second argument
-    try: arg = sys.argv[2]
-
-    except:
-        with open(sys.argv[1], "r") as f:
+    elif arguments_length == 2:
+        with open(arg[1], "r") as f:
             code = f.read()
             #Lexer
             lex = lexer.Lexer(code)
@@ -45,12 +44,14 @@ def main():
             #Parser
             parse = mparser.Parser(tokens,False)
             ast = parse.parse(tokens)
+            if ast[2] == True: # There was an error
+                quit()
             obj = generator.Generation(ast[0], ast[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
             gen = obj.generate()
             exec(gen)
             return
 
-    if sys.argv[2] == "-t" or sys.argv[2] == "--t":
+    elif arguments_length > 2 and sys.argv[arguments_length - 1] in ["-t", "--tools"]:
         with open(sys.argv[1], "r", encoding="utf-8") as f:
             code = f.read()
         print("ORIGINAL CODE:")
@@ -66,6 +67,9 @@ def main():
 
         parse = mparser.Parser(tokens, True)
         ast = parse.parse(tokens)
+        if ast[2] == True:  # There was an error
+            quit()
+
         print("Abstract Syntax Tree:")
         print(ast[0])
         print(17*"-" + "CODE GENERATION" + 18*"-")
@@ -75,7 +79,9 @@ def main():
         print("#"*21,"OUTPUT","#"*21)
         exec(gen)
 
-    elif sys.argv[2] == "-c" or sys.argv[2] == "--compile":
+    elif arguments_length > 2 and ("-c" in sys.argv or  "--compile" in sys.argv) and ("-t" not in sys.argv or "--tools" not in sys.argv):
+        import subprocess
+
         with open(sys.argv[1], "r", encoding="utf-8") as f:
             code = f.read()
         print("ORIGINAL CODE:")
@@ -101,8 +107,18 @@ def main():
         f = open(sys.argv[1][:-4] + ".cpp", 'w')
         f.write(gen)
         f.close()
-        os.system('g++ {filename}.cpp -o {filename}'.format(filename=sys.argv[1][:-4]))
-        print("Compilation successful")
+        if subprocess.call(["g++", f"{sys.argv[1][:-4]}.cpp", "-o", f"{sys.argv[1][:-4]}"]) == 0:
+            if "-r" in sys.argv or "--run" in sys.argv:
+                PATH = os.getcwd()
+                filename = sys.argv[1][:-4].split('/')
+                os.chdir("".join([str(i) + "/" for i in filename[:-1]]))
+                subprocess.call([f"{filename[-1]}.exe"], shell=True)
+                os.system(f"cd {PATH}")
+            else:
+                print("Compilation successful")
+        else:
+            print("Compilation errors")
+
 #---------------------------------------------------------------------------
 
 if __name__ == "__main__":

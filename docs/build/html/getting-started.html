@@ -53,7 +53,7 @@ test
 &gt;
 </pre></div>
 </div>
-<p>You can exit interactive shell by typing exit().
+<p>You can exit interactive shell by typing exit() or exit.
 When you create .plz script and you want to run without shell, put name of file you want to run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>~$ pulzar test.plz
 </pre></div>
@@ -63,11 +63,12 @@ When you create .plz script and you want to run without shell, put name of file 
 <h1>Hello world<a class="headerlink" href="#hello-world" title="Permalink to this headline">¶</a></h1>
 <p>Making hello world in pulzar is really simple:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Program</span> <span class="n">Console</span><span class="p">;</span>
-<span class="n">echo</span> <span class="s2">&quot;hello world&quot;</span><span class="p">;</span>
+<span class="n">echo</span> <span class="s2">&quot;hello world!&quot;</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>This will result hell world.</p>
-<p>if you want to see all tools and how pulzar works add -t argument after filename:</p>
+<p>This will result hell world!.
+(Note: that the semicolon is optional any most cases, but there must be a new line to end that statement.)</p>
+<p>if you want to see all tools and how pulzar works add -t or --tools argument after filename:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>~$ pulzar test.plz -t
 </pre></div>
 </div>

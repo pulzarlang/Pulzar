@@ -1,7 +1,10 @@
-Program Console;
+Program Browser;
 set_port : 8080;
-
 var username = POST : 'username';
-str password = GET : 'password';
+var password = POST : 'password';
 
-echo username, password;
+if password == "test" {
+    echo "<h1>You are logged in</h1>";
+} else {
+    echo "<h1>Wrong username or password</h1>";
+}

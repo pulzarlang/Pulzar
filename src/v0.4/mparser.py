@@ -9,6 +9,7 @@ from Lib.math.main import *
 import numpy as np
 import re
 
+
 class Parser:
 
     def __init__(self, token_stream, include):
@@ -20,6 +21,8 @@ class Parser:
         self.isConsole = True
         self.lines = 1
         self.token_index = 0
+        self.nesting_count = 0
+        self.error = False
 
     def parse(self, token_stream):
         """
@@ -30,8 +33,9 @@ class Parser:
 
             token_type = self.tokens[self.token_index][0]
             token_value = self.tokens[self.token_index][1]
-
             # If token == echo add tokens to parse_include()
+            if self.error:
+                return [self.ast, self.isConsole, self.error]
             if token_type == "KEYWORD" and token_value == "include":
                 self.parse_include(token_stream[self.token_index:len(token_stream)], False)
 
@@ -61,9 +65,6 @@ class Parser:
             elif token_type == "KEYWORD" and token_value == "func":
                 self.parse_func(token_stream[self.token_index:len(token_stream)], False)
 
-            elif token_type == "KEYWORD" and token_value == "return":
-                self.parse_return(token_stream[self.token_index:len(token_stream)], False)
-
             elif token_type == "KEYWORD" and token_value == "class":
                 self.parse_class(token_stream[self.token_index:len(token_stream)], False)
 
@@ -75,6 +76,9 @@ class Parser:
 
             elif token_type == "KEYWORD" and token_value == "macros":
                 self.parse_macros(token_stream[self.token_index:len(token_stream)])
+
+            elif token_type == "KEYWORD" and token_value == "match":
+                self.parse_match(token_stream[self.token_index:len(token_stream)], False)
 
             elif token_type == "NEWLINE": self.lines += 1
 
@@ -97,10 +101,10 @@ class Parser:
 
         # If no Program declaration is found in code, calls a error message
         if count == 0:
-            msg = "SyntaxError at line {}:\nProgram must be difinied".format(self.lines)
+            msg = "SyntaxError at line {}:\nProgram must be definied".format(self.lines)
             self.error_message(msg, token_stream, self.token_index)
 
-        return [self.ast, self.isConsole]
+        return [self.ast, self.isConsole, self.error]
 
     def parse_include(self, token_stream, inScope):
 
@@ -133,9 +137,9 @@ class Parser:
         if inScope == False:
             self.ast['main_scope'].append(ast)
 
-        return [ast, tokens_checked]
-
         self.token_index += tokens_checked
+
+        return [ast, tokens_checked]
 
     def parse_math(self, token_stream, inScope):
 
@@ -194,10 +198,10 @@ class Parser:
 
             tokens_checked += 1
 
-        self.token_index += tokens_checked
-
         if inScope == False:
             self.ast['main_scope'].append(ast)
+
+        self.token_index += tokens_checked
 
         return [ast, tokens_checked]
 
@@ -215,6 +219,7 @@ class Parser:
             token_value = token_stream[tokens_checked][1]
 
             # If  semic is found loop breaks
+
             if token_type in ["SEMIC", "NEWLINE"]:
                 break
 
@@ -257,8 +262,8 @@ class Parser:
                 msg = "SyntaxError at line {}\n:Invalid operator '{}'".format(self.lines, token_value)
                 self.error_message(msg, token_stream, token)
 
-            elif token == 3 and token_type == "IDENTIFIER" and token_value not in constants:
-                value = str(self.get_token_value(token_value))
+            elif token == 3 and token_type == "IDENTIFIER" and token_value not in constants and token_stream[tokens_checked + 1][1] != ":":
+                value = str(token_value)
 
             elif token == 3 and token_type == "IDENTIFIER" and token_value in constants:
                 value = "constants['{}']".format(token_value)
@@ -302,6 +307,9 @@ class Parser:
             elif token > 3 and token_type == "IDENTIFIER" and token_value in constants:
                 value += "constants['{}']".format(token_value)
 
+            elif token > 3 and token_type == "IDENTIFIER":
+                value += str(token_value)
+
             elif token > 3 and token_type == "SQUARE_ROOT":
                 if re.match("[a-z]", token_value) or re.match("[A-Z]", token_value):
                     token_value = self.get_token_value(token_value)
@@ -341,7 +349,7 @@ class Parser:
                 try:
                     value = eval(value)
                     value = int(value)
-                except ValueError:
+                except NameError:
                     pass
             elif typ8 == "int" and string == True or typ8 == "int" and value in ["True", "False", "None"]:
                 msg = "TypeError at line %s:\nDeclared wrong data type, '%s' is not integer" % (self.lines, value)
@@ -351,7 +359,7 @@ class Parser:
                 try:
                     value = eval(value)
                     value = float(value)
-                except ValueError:
+                except NameError:
                     pass
 
             elif typ8 == "float" and string == True or typ8 == "float" and value in ["True", "False", "None"]:
@@ -362,7 +370,7 @@ class Parser:
                 try:
                     value = eval(value)
                     value = 'Complex({}, {})'.format (value.real, value.imag)
-                except ValueError:
+                except NameError:
                     pass
 
             elif typ8 == "complex" and string == True or typ8 == "complex" and value in ["True", "False", "None"]:
@@ -372,7 +380,7 @@ class Parser:
             if typ8 == "bool" and value in ["True", "False", "None"]:
                 try:
                     value = bool(value)
-                except ValueError:
+                except NameError:
                     pass
             elif typ8 == "bool" and value not in ["True", "False", "None"]:
                 msg = "TypeError at line %s:\nDeclared wrong data type, '%s' is not boolean" % (self.lines, value)
@@ -388,6 +396,7 @@ class Parser:
         self.symbol_table.append([ast['variable_declaration'][0]['type'], ast['variable_declaration'][1]['name'], ast['variable_declaration'][2]['value']]) # type, name, value
 
         self.token_index += tokens_checked
+
         return [ast, tokens_checked]
 
     def parse_variable(self, token_stream, inScope):
@@ -420,8 +429,8 @@ class Parser:
                 msg = "SyntaxError at line {}:\nInvalid operator '{}'".format(self.lines, token_value)
                 self.error_message(msg, token_stream, token)
 
-            elif token == 2 and token_type == "IDENTIFIER" and token_value not in constants:
-                value = str(self.get_token_value(token_value))
+            elif token == 2 and token_type == "IDENTIFIER" and token_value not in constants and token_stream[tokens_checked + 1][1] != ":":
+                value = str(token_value)
 
             elif token == 2 and token_type == "IDENTIFIER" and token_value in constants:
                 value = "constants['{}']".format(token_value)
@@ -498,7 +507,7 @@ class Parser:
             try:
                 value = eval(value)
                 value = int(value)
-            except ValueError:
+            except NameError:
                 pass
         elif typ8 == "int" and string == True or typ8 == "int" and value in ["True", "False", "None"]:
             msg = "TypeError at line %s:\nDeclared wrong data type, '%s' is not integer" % (self.lines, value)
@@ -508,7 +517,7 @@ class Parser:
             try:
                 value = eval(value)
                 value = float(value)
-            except ValueError:
+            except NameError:
                 pass
 
         elif typ8 == "float" and string == True or typ8 == "float" and value in ["True", "False", "None"]:
@@ -518,7 +527,7 @@ class Parser:
         if typ8 == "bool" and value in ["True", "False", "None"]:
             try:
                 value = bool(value)
-            except ValueError:
+            except NameError:
                 pass
         elif typ8 == "bool" and value not in ["True", "False", "None"]:
             msg = "TypeError at line %s:\nDeclared wrong data type, '%s' is not boolean" % (self.lines, value)
@@ -546,6 +555,7 @@ class Parser:
         tokens_checked = 0
         scope_tokens = []
         for token in token_stream:
+
             tokens_checked += 1
 
             token_value = token[1]
@@ -566,11 +576,13 @@ class Parser:
     def parse_scope(self, token_stream, statement_ast, astName, isNested, macros):
         ast = {'scope': []}
         tokens_checked = 0
-        nesting_count = 0
+        lines = 1
         while tokens_checked < len(token_stream):
 
             token_type = token_stream[tokens_checked][0]
             token_value = token_stream[tokens_checked][1]
+
+
             # If token is echo add tokens to parse_include()
             if token_type == "KEYWORD" and token_value == "include":
                 include = self.parse_include(token_stream[tokens_checked:len(token_stream)])
@@ -619,9 +631,9 @@ class Parser:
                 tokens_checked += function[1]
 
             elif token_type == "KEYWORD" and token_value == "return":
-                return_statment = self.parse_return(token_stream[tokens_checked:len(token_stream)], True)
-                ast['scope'].append(return_statment[0])
-                tokens_checked += return_statment[1]
+                return_statement = self.parse_return(token_stream[tokens_checked:len(token_stream)], True)
+                ast['scope'].append(return_statement[0])
+                tokens_checked += return_statement[1]
 
             elif token_type == "KEYWORD" and token_value == "run":
                 run = self.call_func(token_stream[tokens_checked:len(token_stream)], True)
@@ -643,12 +655,18 @@ class Parser:
                 ast['scope'].append(define[0])
                 tokens_checked += define[1]
 
+            elif token_type == "NEWLINE":
+                self.lines += 1
+
+            elif token_value == "}":
+                self.nesting_count += 1
+
             tokens_checked += 1
 
-            if token_type == '}':
-                nesting_count += 1
+        self.token_index += self.nesting_count + 1
 
-        self.token_index += nesting_count + 1
+        self.lines -= 1
+
         statement_ast[astName].append(ast)
         if isNested == False:
             self.ast['main_scope'].append(statement_ast)
@@ -678,12 +696,21 @@ class Parser:
             elif token == 1 and token_type == "IDENTIFIER" and token_value in constants:
                 value = "constants['{}']".format(token_value)
 
-            elif token == 1 and token_type not in ["IDENTIFIER", "FACTORIAL"]:
+            elif token == 1 and token_type not in ["IDENTIFIER", "FACTORIAL", "SQUARE_ROOT"]:
                 value = token_value
 
             elif token == 1 and token_type == "FACTORIAL":
                 math = MathModule()
                 value = str(math.factorial(int(token_value)))
+
+            elif token == 1 and token_type == "SQUARE_ROOT":
+                if re.match("[a-z]", token_value) or re.match("[A-Z]", token_value):
+                    token_value = str(self.get_token_value(token_value))
+                    print(token_value)
+                if "Complex(" in token_value and ")" in token_value:
+                    value = str(np.sqrt(token_value))
+                else:
+                    value = str(np.sqrt(float(token_value)))
 
             elif token > 1 and token_type == "FACTORIAL":
                 math = MathModule()
@@ -791,7 +818,6 @@ class Parser:
         els = False
         tokens = []
         ast = {'conditional_statement': []}
-
         for token in range(0, len(token_stream)):
 
             token_type = token_stream[tokens_checked][0]
@@ -825,8 +851,9 @@ class Parser:
         if els == False:
             ast['conditional_statement'].append({'condition': condition})
 
-        self.token_index += tokens_checked - 1
-        scope_tokens = self.get_scope(token_stream[tokens_checked:len(token_stream)])
+        self.token_index += tokens_checked
+
+        scope_tokens = self.get_scope(token_stream[tokens_checked + 1:len(token_stream)])
 
         if isNested == False:
             self.parse_scope(scope_tokens[0], ast, 'conditional_statement', False, False)
@@ -920,7 +947,8 @@ class Parser:
 
             tokens_checked += 1
 
-        self.token_index += tokens_checked - 1
+        self.token_index += tokens_checked
+
         scope_tokens = self.get_scope(token_stream[tokens_checked + 1:len(token_stream)])
 
         if keyword == "while": ast['loop'].append({'condition': condition})
@@ -963,11 +991,11 @@ class Parser:
 
             tokens_checked += 1
 
-        self.token_index += tokens_checked - 1
-
         ast['function_declaration'].append({'argument': value})
 
-        scope_tokens = self.get_scope(token_stream[tokens_checked:len(token_stream)])
+        self.token_index += tokens_checked - 1
+
+        scope_tokens = self.get_scope(token_stream[tokens_checked + 1:len(token_stream)])
 
         if isNested == False:
             self.parse_scope(scope_tokens[0], ast, 'function_declaration', False, False)
@@ -977,6 +1005,7 @@ class Parser:
         tokens_checked += scope_tokens[1]
 
         self.symbol_table.append(['function', ast['function_declaration'][0]['name'], ast['function_declaration'][1]['argument']])
+
 
         return [ast, tokens_checked]
 
@@ -989,24 +1018,25 @@ class Parser:
 
             token_type = token_stream[tokens_checked][0]
             token_value = token_stream[tokens_checked][1]
+
             if token_type == "SCOPE_DEFINIER" and token_value == "{": break
 
             if token == 1 and token_type == "IDENTIFIER":
                 ast['class'].append({'name': token_value})
 
             elif token == 2 and token_type != "COLON":
-                self.error_message(["SyntaxError at line "+ str(self.lines) +":", "':' is missing"])
+                msg = f"SyntaxError at line {self.lines}\n':' is missing."
+                self.error_message(msg, token_stream, token)
 
             elif token == 3 and token_value == "object":
                 ast['class'].append({'argument': token_value})
+                decl = True
 
             tokens_checked += 1
 
+        scope_tokens = self.get_scope(token_stream[tokens_checked + 1:len(token_stream)])
+
         self.token_index += tokens_checked - 1
-
-        ast['class'].append({'argument': value})
-
-        scope_tokens = self.get_scope(token_stream[tokens_checked:len(token_stream)])
 
         if isNested == False:
             self.parse_scope(scope_tokens[0], ast, 'class', False, False)
@@ -1069,13 +1099,82 @@ class Parser:
 
         return [ast, tokens_checked]
 
+    def parse_match(self, token_stream, isNested):
+        """
+        var stdin;
+        input stdin;
+        match stdin {
+            1 -> echo "One";
+        }
+        """
+        tokens_checked, tokens_checked_2 = 0, 0
+        ast = {'match': []}
+        for token in range(0, len(token_stream)):
+
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
+
+            if token_type == "SCOPE_DEFINIER" and token_value == "{": break
+
+            if token == 1:
+                ast['match'].append({'variable': token_value})
+
+            tokens_checked += 1
+
+        self.token_index += tokens_checked - 1
+
+        scope_tokens = self.get_scope(token_stream[tokens_checked + 1:len(token_stream)])
+
+        if isNested == False:
+            self.parse_match_case(scope_tokens[0][1:], ast, False)
+        else:
+            self.parse_match_case(scope_tokens[0][1:], ast, True)
+
+
+
+    def parse_match_case(self, token_stream, statement_ast, isNested):
+        tokens_checked = 0
+        value = ""
+        ast = {'match': []}
+        for token in range(0, len(token_stream)):
+
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
+
+            if token_type == "SEMIC" and token_value == ";": break
+
+            if token == 1:
+                ast['match'].append({'case': token_value})
+
+            elif token == 2 and token_type != "ARROW":
+                print(token_value)
+                msg = f"SyntaxError at line {self.lines}\n'->' symbol is missing."
+                self.error_message(msg, token_stream, token)
+
+            elif token == 3:
+                value = token_value
+
+            elif token > 3:
+                value += f" {token_value}"
+
+            tokens_checked += 1
+
+
+        statement_ast[astName].append(ast)
+
+        if isNested == False:
+            self.ast['main_scope'].append(statement_ast)
+
+        return [ast, tokens_checked]
+
+
     def parse_macros(self, token_stream):
         """
 		macros
 		{
-			define x : 10;
+			define x, 10;
 
-			redefine @echo : "print";
+			redefine @echo, "print";
 		}
         """
         tokens_checked = 0
@@ -1089,7 +1188,7 @@ class Parser:
 
             tokens_checked += 1
 
-        scope_tokens = self.get_scope(token_stream[tokens_checked:len(token_stream)])
+        scope_tokens = self.get_scope(token_stream[tokens_checked + 1:len(token_stream)])
 
         self.parse_scope(scope_tokens[0], ast, 'macros', False, True)
 
@@ -1155,7 +1254,7 @@ class Parser:
                 self.error_message("SyntaxError at line {}: ':' is missing".format(self.lines))
 
             elif token == 2:
-                if token_value == "();": argument = ""
+                if token_value == "()": argument = ""
                 else: argument = token_value
 
             elif token > 2 and token_type in ['COMMA', 'INTEGER', 'STRING', 'BOOL']:
@@ -1176,14 +1275,14 @@ class Parser:
         tokens_checked = 1
         length = 0
         for token in range(len(token_stream)):
-            if token_stream[token][0] == "NEWLINE": break
+            if token_stream[token][0] == "SEMIC": break
             tokens_checked += 1
 
         print(msg)
-        error_msg = " ".join(str(token[1])  for token in token_stream[:tokens_checked] if token[0] != "NEWLINE")
+        error_msg = " ".join(str(token[1]) for token in token_stream[:tokens_checked] if token[0] != "SEMIC")
         print("".join(error_msg[:-2] + ";" if error_msg[-1:] == ";" else error_msg))
         for i in range(len(token_stream)):
             if i == token: break
-            else: length += len(token_stream[i][1]) + 1
+            else: length += len(token_stream[i][1])
         print(" " * length + "^")
-        quit()
+        self.error = True

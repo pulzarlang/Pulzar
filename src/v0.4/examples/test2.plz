@@ -1,6 +1,7 @@
 Program Console;
-var x = 5;
-var y = 10;
-int z = x + y * 100;
-echo 'Z ma hodnotu:';
-echo z;
+int x;
+for x :: x < 10 :: x++ {
+    if x mod 2 == 0 {
+        echo x;
+    }
+}

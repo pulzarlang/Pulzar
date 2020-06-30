@@ -22,11 +22,28 @@ class FuncObject(object):
             except: pass
             try: scope = ast['scope']
             except: pass
+        self.check_type(arg)
+        if self.check_type(arg) == 'int':
+            self.exec_str += "int " + str(name) + "(" + str(arg) + ")" + "{\n" + self.transpile_scope(scope, self.nesting_count, 2, False) + "\n}"
+        elif self.check_type(arg) == 'float':
+            self.exec_str += "float " + str(name) + "(" + str(arg) + ")" + "{\n" + self.transpile_scope(scope, self.nesting_count, 2, False) + "\n}"
+        elif self.check_type(arg) == 'str':
+            self.exec_str += "std::string " + str(name) + "(" + str(arg) + ")" + "{\n" + self.transpile_scope(scope, self.nesting_count, 2, False) + "\n}"
+        elif self.check_type(arg) == 'char':
+            self.exec_str += "char " + str(name) + "(" + str(arg) + ")" + "{\n" + self.transpile_scope(scope, self.nesting_count, 2, False) + "\n}"
+        elif self.check_type(arg) == 'void':
+            self.exec_str += "void " + str(name) + "(" + str(arg) + ")" + "{\n" + self.transpile_scope(scope, self.nesting_count, 2, False) + "\n}"
+        elif self.check_type(arg) == False:
+            self.exec_str += "#define " + str(name) + "(" + str(arg) + ")"  + self.transpile_scope(scope, self.nesting_count, 2, True) + "\n"
 
-        self.exec_str += "void " + str(name) + "(" + str(arg) + ")" + "{\n" + self.transpile_scope(scope, self.nesting_count, 2) + "\n}"
         return self.exec_str
 
-    def transpile_scope(self, body_ast, nesting_count, items):
+
+    def check_type(self, arg):
+        arguments = arg.split(',')
+        return False
+
+    def transpile_scope(self, body_ast, nesting_count, items, macros):
 
         body_exec_string = ""
 
@@ -34,30 +51,51 @@ class FuncObject(object):
         for ast in body_ast:
 
             # This will parse variable declerations within the body
-            if self.check_ast('variable_declaration', ast):
+            if self.check_ast('variable_declaration', ast) and macros == False:
                 var_obj = VarObject(ast)
                 transpile = var_obj.transpile()
                 if self.should_dedent_trailing(ast, self.ast, items):
                     body_exec_string += ("    " * (nesting_count - 1)) + transpile + "\n"
                 else:
                     body_exec_string += ("    " * nesting_count) + transpile + "\n"
+            elif self.check_ast('variable_declaration', ast) and macros:
+                var_obj = VarObject(ast)
+                transpile = var_obj.transpile()
+                if self.should_dedent_trailing(ast, self.ast, items):
+                    body_exec_string += ("    " * (nesting_count - 1)) + transpile + " \ \n"
+                else:
+                    body_exec_string += ("    " * nesting_count) + transpile + " \ \n"
 
             # This will parse built-in within the body
-            if self.check_ast('builtin_function', ast):
+            if self.check_ast('builtin_function', ast) and macros == False:
                 gen_builtin = BuiltinObject(ast)
                 transpile = gen_builtin.transpile()
                 if self.should_dedent_trailing(ast, self.ast, 2):
                     body_exec_string += ("    " * (nesting_count - 1)) + transpile[0] + "\n"
                 else:
                     body_exec_string += ("    " * nesting_count) + transpile[0] + "\n"
+            elif self.check_ast('builtin_function', ast) and macros:
+                gen_builtin = BuiltinObject(ast)
+                transpile = gen_builtin.transpile()
+                if self.should_dedent_trailing(ast, self.ast, 2):
+                    body_exec_string += " " + transpile[0][:-1]
+                else:
+                    body_exec_string += " " + transpile[0][:-1]
 
-            if self.check_ast('return', ast):
+            if self.check_ast('return', ast) and macros == False:
                 gen_return = ReturnObject(ast)
                 transpile = gen_return.transpile()
                 if self.should_dedent_trailing(ast, self.ast, 2):
                     body_exec_string += ("    " * (nesting_count - 1)) + transpile + "\n"
                 else:
                     body_exec_string += ("    " * nesting_count) + transpile + "\n"
+            if self.check_ast('return', ast) and macros:
+                gen_return = ReturnObject(ast)
+                transpile = gen_return.transpile()
+                if self.should_dedent_trailing(ast, self.ast, 2):
+                    body_exec_string += " " + transpile[7:-1]
+                else:
+                    body_exec_string += " " + transpile[7:-1]
 
             # This will parse nested conditional statement within the body
             if self.check_ast('conditional_statement', ast):

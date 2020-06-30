@@ -1,0 +1,10 @@
+Program Browser;
+set_port : 8080;
+var data = [ 'c', 'c++', 'python', 'pulzar' ];
+value = GET : 'query';
+int i;
+for i :: i < 4 :: i++ {
+    if data[i] == value {
+        echo data[i];
+    }
+}

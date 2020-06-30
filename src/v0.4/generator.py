@@ -42,6 +42,7 @@ def exec_plz(code, isServer):
         gen = Generation(ast[0], ast[1]).generate_browser()
     else:
         gen = Generation(ast[0], ast[1]).generate()
+
     return gen
 
 #------------- PROGRAM BROWSER ----------
@@ -51,6 +52,7 @@ class Serv(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
+
     def do_HEAD(self):
         self._set_headers()
 
@@ -58,10 +60,18 @@ class Serv(BaseHTTPRequestHandler):
         error = False
         plz = False
         if self.path == '/':
-            self.path = '/index.html'
+            try:
+                file_to_open = open('index.html')
+                self.path = '/index.html'
+            except:
+                self.path = '/index.plz'
 
         elif self.path[-1:] == "/":
-            self.path += '/index.html'
+            try:
+                file_to_open = open('index.html')
+                self.path += '/index.html'
+            except:
+                self.path += '/index.plz'
 
         if self.path[-4:] == ".plz":
             plz = True
@@ -69,7 +79,8 @@ class Serv(BaseHTTPRequestHandler):
         elif "?" in self.path and ".plz" in self.path:
             from urllib.parse import urlparse, parse_qs
             parsed_url = urlparse(self.path)
-            GET_tokens = parse_qs(parsed_url.query)
+            global get_requests
+            get_requests = parse_qs(parsed_url.query)
             plz = True
             self.path = parsed_url.path
         try:
@@ -99,15 +110,59 @@ class Serv(BaseHTTPRequestHandler):
             self.wfile.write(bytes(file_to_open, 'utf-8'))
 
     def do_POST(self):
-        self._set_headers()
-        form = cgi.FieldStorage(
-            fp=self.rfile,
-            headers=self.headers,
-            environ={'REQUEST_METHOD': 'POST'}
-        )
-        value = form.getvalue("username")
+        error = False
+        plz = False
 
-        self.wfile.write(bytes(f"<html><body><h1>{value}</h1></body></html>", 'utf-8'))
+        if self.path == '/':
+            try:
+                file_to_open = open('index.html')
+                self.path = '/index.html'
+            except:
+                self.path = '/index.plz'
+
+        elif self.path[-1:] == "/":
+            try:
+                file_to_open = open('index.html')
+                self.path += '/index.html'
+            except:
+                self.path += '/index.plz'
+
+        if self.path[-4:] == ".plz":
+            plz = True
+        try:
+            file_to_open = open(self.path[1:]).read()
+            self.send_response(200)
+        except:
+            file_to_open = "<!DOCTYPE html>\n"
+            file_to_open += "<html>\n"
+            file_to_open += "<head><title>HTTP ERROR 404 - Page not found</title></head>\n"
+            file_to_open += "<body>\n"
+            file_to_open += "<h1>Error 404 Page not found</h1>\n"
+            file_to_open += "</body>\n"
+            file_to_open += "</html>\n"
+            self.send_response(404)
+            error = True
+        self.end_headers()
+        if plz and error == False:
+            form = cgi.FieldStorage(
+                fp=self.rfile,
+                headers=self.headers,
+                environ={'REQUEST_METHOD': 'POST'}
+            )
+            global post_requests
+            post_requests = []
+            for item in form.list:
+                post_requests.append([item.name, item.value])
+            gen_py = exec_plz(file_to_open, True)
+            pulzar_output = execute(gen_py)
+            output = '<!DOCTYPE html>\n'
+            output += "<html>\n"
+            output += "<head><title>Pulzar web</title></head>\n"
+            output += "<body>{}</body>\n".format(pulzar_output.replace('\n', '<br>'))
+            output += "</html>\n"
+            self.wfile.write(bytes(output, 'utf-8'))
+        else:
+            self.wfile.write(bytes(file_to_open, 'utf-8'))
 
 #--------------------------------------------------------------------------
 
@@ -128,6 +183,8 @@ class Generation:
         from Obj.libObject import libObject
         from Obj.returnObject import ReturnObject
         from Obj.macrosObject import MacrosObject
+        self.transpiled_code = "from Lib.browser.main import *\n"
+        get_request, post_request = False, False
         for ast in self.source_ast:
 
             if self.check_ast('variable_declaration', ast):
@@ -158,15 +215,26 @@ class Generation:
             if self.check_ast('call_function', ast):
                 func = RunFuncObject(ast)
                 x = ast['call_function']
-                if x[0]['name'] == "set-port":
+                if x[0]['name'] == "set_port":
                     global PORT
                     PORT = int(x[1]['argument'])
+                elif x[0]['name'] == "POST":
+                    post_request = True
+                    self.transpiled_code += "POST(%s, post_requests)\n" % (x[1]['argument'])
+                elif x[0]['name'] == "GET":
+                    get_request = True
+                    self.transpiled_code += "GET(%s, get_requests)\n" % (x[1]['argument'])
                 else:
                     self.transpiled_code += func.transpile() + "\n"
 
             if self.check_ast('return', ast):
                 return_ = ReturnObject(ast)
                 self.transpiled_code += return_.transpile() + "\n"
+
+        if post_request:
+            self.transpiled_code = "post_requests = {}\n{}".format(str(post_requests), self.transpiled_code)
+        elif get_request:
+            self.transpiled_code = "get_requests = {}\n{}".format(str(get_requests), self.transpiled_code)
 
         global plz_output
         plz_output = execute(self.transpiled_code)
@@ -182,6 +250,7 @@ class Generation:
             from Obj.builtinObject import BuiltinObject
             from Obj.loopObject import LoopObject
             from Obj.functionObject import FuncObject, RunFuncObject
+            from Obj.classObject import ClassObject
             from Obj.conditionalObject import ConditionalObject
             from Obj.libObject import libObject
             from Obj.returnObject import ReturnObject
@@ -232,6 +301,11 @@ class Generation:
                 if self.check_ast('return', ast):
                     return_ = ReturnObject(ast)
                     self.transpiled_code += return_.transpile() + "\n"
+
+                if self.check_ast('class', ast):
+                    oop = ClassObject(ast, 1)
+                    self.transpiled_code += oop.transpile() + "\n"
+
 
                 if self.check_ast('macros', ast):
                     macro = MacrosObject(ast)

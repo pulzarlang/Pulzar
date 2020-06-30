@@ -7,7 +7,7 @@ for i :: i <= n :: i++
     } elseif i mod 3 ==0 {
        	echo "Buzz";
     } elseif i mod 2 == 0 and i mod 3 == 0 {
-    echo "Fizzbuzz";
+        echo "Fizzbuzz";
     } else {
         echo i;
     }

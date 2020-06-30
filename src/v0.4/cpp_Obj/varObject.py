@@ -17,10 +17,27 @@ class VarObject(object):
             try: value = ast['value']
             except: pass
 
-        if typ8 == "str":
-            self.exec_str += "std::string" + " " + name + " = " + str(value) + ";"
+        if "[" in str(value) and "]" in str(value):
+            name = f"{name}[]"
+
+        value = str(value).replace('[', '{').replace(']', '}')
+        if ":" in value:
+            value = value.split(':')
+            value[1] = value[1].replace('(', '').replace(')', '')
+            if typ8 == "str":
+                self.exec_str += f"std::string {name} = { value[0] }({ value[1] });"
+            elif typ8 == "var":
+                self.exec_str += f"int {name} = { value[0] }({ value[1] });"
+            else:
+                self.exec_str += f"{typ8} {name} = { value[0] }({ value[1] });"
+
         else:
-            self.exec_str += str(typ8) + " " + name + " = " + str(value) + ";"
+            if typ8 == "str":
+                self.exec_str += f"std::string" + " " + name + " = " + str(value) + ";"
+            elif typ8 == "var":
+                self.exec_str += "int" + " " + name + " = " + str(value) + ";"
+            else:
+                self.exec_str += str(typ8) + " " + name + " = " + str(value) + ";"
 
         return self.exec_str
         

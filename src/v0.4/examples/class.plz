@@ -1,13 +1,12 @@
 Program Console;
-
 class Person : object {
-    func @identity : this, name, age {
-        var this.name = name;
-        var this.age = age;
-    }
-    func info : this {
-        echo "My name is" + this.name;
-        echo "I am"+ "\s" + this.age;
+    func @identity : self, name, age {
+        var self.age = age;
+        var self.name = name;
+        var self.x = 10;
+        var self.tokens = [];
     }
 }
-Person.info : "Brian", 15;
+var p = Person : "Brian", 15;
+echo p.age;
+echo "Hello", p.name;

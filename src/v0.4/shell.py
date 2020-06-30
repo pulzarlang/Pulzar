@@ -1,26 +1,27 @@
-import ctypes
-import pyfiglet
 from colorama import *
-import os
+import re
 
-import constants
 import lexer
 import mparser
 import generator
+result = '''
+    ____        __                
+   / __ \__  __/ /___  ____ ______ 
+  / /_/ / / / / /_  / / __ `/ ___/
+ / ____/ /_/ / / / /_/ /_/ / /
+/_/    \__,_/_/ /___/\__,_/_/
+'''
 
 def shell():
     init(convert=True)
     print(Fore.WHITE + "(c) Brian Turza 2018 - 20 Pulzar v0.4\n ")
     print(Fore.WHITE + "Welcome to \n")
-    result = pyfiglet.figlet_format("Pulzar", font="slant")
     print(Fore.GREEN, result)
     print(Fore.WHITE + "Type 'help' for more information")
     symbol_tree = ""
     stack = ""
     command = ""
     while command != "exit()" or  command != "quit()":
-        if command == "cls":
-            os.system("cls")
         command = input(">")
 
         if command in ["help", "help()"]:
@@ -37,9 +38,15 @@ def shell():
         elif command == "exit" or command == "exit()" or command == "quit()":
             quit()
         else:
-
             if "var" in command or "str" in command or "int" in command or "bool" in command or "complex" in command:
-                symbol_tree += command + "\n"
+                lex = lexer.Lexer(f"Program Console;\n{command}")
+                tokens = lex.tokenize()
+                # Parser
+                parse = mparser.Parser(tokens, False)
+                ast = parse.parse(tokens)
+                error = ast[2]
+                if error == False:
+                    symbol_tree += command + "\n"
 
             elif "func" and "{" in command:
                 temp = ""
@@ -48,32 +55,49 @@ def shell():
                     command += "\n" + temp
                 stack += command + "\n"
 
-            elif "if" in command or "if" in command or "else" in command or "for" in command or "while" and "{" in command:
+            elif "if" in command or "elseif" in command or "else" in command or "for" in command or "while":
+                print(command)
                 temp = ""
                 while temp != "}":
                     temp = input(" ")
                     command += "\t" + temp + "\n"
-                command = "Program Console;\n" + symbol_tree + stack + command
-                lex = lexer.Lexer(command)
+                code = f"Program Console;\n{symbol_tree}{stack}{command}"
+                lex = lexer.Lexer(code)
                 tokens = lex.tokenize()
                 # Parser
                 parse = mparser.Parser(tokens, False)
                 ast = parse.parse(tokens)
-                obj = generator.Generation(ast[0], ast[1])
-                gen = obj.generate()
-                exec(gen)
+                print(ast)
+                error = ast[2]
+                if error == False:
+                    obj = generator.Generation(ast[0], ast[1])
+                    gen = obj.generate()
+                    try:
+                        # mycode
+                        exec(gen)
+                    except Exception as exc:
+                        print("Error at line 1:")
+                        print(exc)
 
             else:
-                code = command = "Program Console;\n" + symbol_tree + stack + command + "\n"
+                code = "Program Console;\n" + symbol_tree + stack + command
                 # Lexer
                 lex = lexer.Lexer(code)
                 tokens = lex.tokenize()
                 # Parser
                 parse = mparser.Parser(tokens, False)
                 ast = parse.parse(tokens)
-                obj = generator.Generation(ast[0], ast[1])
-                gen = obj.generate()
-                exec(gen)
+                error = ast[2]
+                if error == False:
+                    obj = generator.Generation(ast[0], ast[1])
+                    gen = obj.generate()
+                    try:
+                        # mycode
+                        exec(gen)
+                    except Exception as exc:
+                        print("Error at line 1:")
+                        print(exc)
+
 
 if __name__ == "__main__":
     shell()

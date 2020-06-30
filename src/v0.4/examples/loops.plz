@@ -1,9 +1,9 @@
 Program Console;
-float g = 9.81;
 int i = 0;
-int n = 5;
-for i :: i < n :: i++ {
-    for j :: j < n :: j++ {
-        echo i;
+int j = 0;
+int n = 10;
+for i :: i < 10 :: i++ {
+    for j :: j < 10 :: j++ {
+        echo i * j;
     }
 }

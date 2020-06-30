@@ -12,7 +12,7 @@ class Lexer:
 
     def __init__(self, source_code):
         self.source_code = source_code
-
+        self.source_index = 0
     
     def getMatcher(self, matcher, current_index, source_code):
 
@@ -40,19 +40,16 @@ class Lexer:
 
                 word += item + " "
 
-                if matcher in item and iter_count != 1: 
-
+                if matcher in item and iter_count != 1:
                     return [matcher + word.partition(matcher)[-1].partition(matcher[0])[0] + matcher,word.partition(matcher)[-1].partition(matcher[0])[2],iter_count - 1]
                     break
 
     def tokenize(self):
         tokens = []
-        source_code =  re.findall(r'\S+|\n', self.source_code) #Split code to words including '\n'
-        source_index = 0
-
-        for source_index in range(len(source_code)):
+        source_code = re.findall(r'\S+|\n', self.source_code)  # Split code to words including '\n'
+        while self.source_index < len(source_code):
             
-            word = source_code[source_index]
+            word = source_code[self.source_index]
             if "\n" in word:
                 tokens.append(["NEWLINE", word])
             
@@ -127,6 +124,9 @@ class Lexer:
             elif word == ":": 
                 tokens.append(["COLON",":"])
 
+            elif word == "->":
+                tokens.append(["ARROW", word])
+
             elif word == "::":
                 tokens.append(["SEPARATOR", word])
             
@@ -139,8 +139,9 @@ class Lexer:
                 tokens.append(["SCOPE_DEFINIER", word])
 
             elif ('"') in word:
-                matcherReturn = self.getMatcher('"', source_index, source_code)
-                if matcherReturn[1] == '': tokens.append(["STRING", matcherReturn[0].replace("\s"," ")])
+                matcherReturn = self.getMatcher('"', self.source_index, source_code)
+                if matcherReturn[1] == '':
+                    tokens.append(["STRING", str(matcherReturn[0]).replace("\s"," ")])
 
                 else:
 
@@ -148,11 +149,11 @@ class Lexer:
                     
                     if ';' in matcherReturn[1]: tokens.append(["SEMIC", ";"])
 
-                    source_index += matcherReturn[2]
+                    self.source_index += matcherReturn[2]
                     pass
             
             elif ("'") in word:
-                matcherReturn = self.getMatcher("'", source_index, source_code)
+                matcherReturn = self.getMatcher("'", self.source_index, source_code)
                 
                 if matcherReturn[1] == '': tokens.append(["STRING", matcherReturn[0].replace("\s"," ")])
 
@@ -162,11 +163,11 @@ class Lexer:
                     
                     if ';' in matcherReturn[1]: tokens.append(["SEMIC", ";"])
 
-                    source_index += matcherReturn[2]
+                    self.source_index += matcherReturn[2]
                     pass
             
             elif  word[:1] == "(" or  word[len(word) - 1] == ")" or word == "(" or word == ")" or word in "()":
-                if word[:-1] == ";":
+                if word[len(word) - 1] in [";", ","]:
                     tokens.append(["BRACKET",word[:-1]])
                 else:
                     tokens.append(["BRACKET",word])
@@ -176,9 +177,7 @@ class Lexer:
                     tokens.append(["ARRAY", word[:-1]])
                 else:
                     tokens.append(["ARRAY", word])
-                
-            
-            elif word.startswith("\t"): tokens.append(["TAB","\t"]) 
+
 
             if word[len(word) - 1] == ";":
                 tokens.append(["SEMIC",';'])
@@ -186,5 +185,6 @@ class Lexer:
             if word == "," or word[len(word) - 1] == ",":
                 tokens.append(["COMMA",","])
 
-            source_index += 1
+            self.source_index += 1
+
         return tokens

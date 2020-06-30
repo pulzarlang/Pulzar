@@ -1,6 +1,12 @@
 Program Console;
-
-func fibonacci : n {
-    return ( (1 + √5) ^ n - (1 - √5 ) ^ n) / (2 ^ n * √5);
+int n = 10;
+var a;
+var b = 1;
+var z;
+var i;
+while a < n {
+    z = a + b;
+    b = a;
+    a = b;
 }
-fibonacci : 12;
+echo z;

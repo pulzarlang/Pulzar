@@ -23,6 +23,8 @@ class FuncObject(object):
             try: scope = ast['scope']
             except: pass
 
+        if name == "@identity": name = "__init__"
+
         self.exec_str += "def " + str(name) + "(" + str(arg) + ")" + ":\n" + self.transpile_scope(scope, self.nesting_count, 2)
         return self.exec_str
 

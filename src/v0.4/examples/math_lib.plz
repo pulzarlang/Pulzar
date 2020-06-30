@@ -1,4 +1,7 @@
 Program Console;
 include math;
 include "examples/functions.plz";
-test : 5, 10;
+complex a = 5i + 3;
+complex b = 3 - 2i;
+var x = add : (a, b);
+echo x ^ 2, "|", a / b;

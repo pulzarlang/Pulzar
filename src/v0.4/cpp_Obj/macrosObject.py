@@ -32,5 +32,6 @@ class MacrosObject(object):
                 pass
 
             if str(func) == "define":
-                define = str(name) + " = " + str(value)
-                return define
+                self.exec_str += f"#define {name} {value}\n"
+
+        return self.exec_str

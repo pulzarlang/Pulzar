@@ -19,7 +19,7 @@ When you open pulzar, a ineractive console will pop up, where you can easily exp
    test
    >
 
-You can exit interactive shell by typing exit().
+You can exit interactive shell by typing exit() or exit.
 When you create .plz script and you want to run without shell, put name of file you want to run::
     ~$ pulzar test.plz
 
@@ -28,10 +28,11 @@ Hello world
 Making hello world in pulzar is really simple::
 
     Program Console;
-    echo "hello world";
+    echo "hello world!";
 
-This will result hell world.
+This will result hell world!.
+(Note: that the semicolon is optional any most cases, but there must be a new line to end that statement.)
 
-if you want to see all tools and how pulzar works add -t argument after filename::
+if you want to see all tools and how pulzar works add -t or --tools argument after filename::
 
     ~$ pulzar test.plz -t

@@ -2,4 +2,7 @@ Program Console;
 macros 
 {
     define X, 10;
+    redefine print, @echo;
+    define square : n, n * n;
 }
+echo X + 5;

@@ -1,4 +1,9 @@
 Program Console;
-func test : x, y {
-       echo x + y;
+func add : x, y {
+    return x + y;
 }
+func x : () {
+    return 5;
+}
+var answer = add : (5, 10 + 1);
+echo x : () + answer;
