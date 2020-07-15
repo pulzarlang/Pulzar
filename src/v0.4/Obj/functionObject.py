@@ -61,6 +61,14 @@ class FuncObject(object):
                 else:
                     body_exec_string += ("    " * nesting_count) + transpile + "\n"
 
+            if self.check_ast('call_function', ast):
+                gen_call = RunFuncObject(ast)
+                transpile = gen_call.transpile()
+                if self.should_dedent_trailing(ast, self.ast, items):
+                    body_exec_string += ("    " * (nesting_count - 1)) + transpile + "\n"
+                else:
+                    body_exec_string += ("    " * nesting_count) + transpile + "\n"
+
             # This will parse nested conditional statement within the body
             if self.check_ast('conditional_statement', ast):
                 # Increase nesting count because this is a condition statement inside a conditional statement

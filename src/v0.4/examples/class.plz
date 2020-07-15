@@ -3,8 +3,6 @@ class Person : object {
     func @identity : self, name, age {
         var self.age = age;
         var self.name = name;
-        var self.x = 10;
-        var self.tokens = [];
     }
 }
 var p = Person : "Brian", 15;

@@ -88,6 +88,15 @@ class ConditionalObject:
                 else:
                     body_exec_string += ("    " * nesting_count) + transpile + "\n"
 
+            if self.check_ast('call_function', ast):
+                from Obj.functionObject import RunFuncObject
+                gen_call = RunFuncObject(ast)
+                transpile = gen_call.transpile()
+                if self.should_dedent_trailing(ast, self.ast, items):
+                    body_exec_string += ("    " * (nesting_count - 1)) + transpile + "\n"
+                else:
+                    body_exec_string += ("    " * nesting_count) + transpile + "\n"
+
         return body_exec_string
 
     def check_ast(self, astName, ast):

@@ -77,6 +77,8 @@ class Lexer:
             
             elif word in constants.INCREMENT_OPERATORS: tokens.append(["INCREMENT_OPERATOR", word])
 
+            elif word in constants.SPECIAL_OPERATORS: tokens.append(["ELLIPSIS_OPERATOR", word])
+
             elif word in constants.BOOLEAN or word[:-1] in constants.BOOLEAN:
                 if word[len(word) - 1] == ";":
                     tokens.append(["BOOLEAN", word[:-1]])
@@ -92,6 +94,8 @@ class Lexer:
                     tokens.append(["INCREMENT",word])
                 elif word[len(word) - 2] == "--" or word[:2] == "--":
                     tokens.append(["DECREMENT", word])
+                elif word[:2] in ['++', '--']:
+                    tokens.append(["INCREMENT", word])
                 else:
                     tokens.append(["IDENTIFIER", word])
                 

@@ -7,3 +7,6 @@ func x : () {
 }
 var answer = add : (5, 10 + 1);
 echo x : () + answer;
+
+int sum = a, b -> a + b;
+echo sum : 5, 15;

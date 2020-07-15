@@ -6,4 +6,5 @@ OPERATORS = ["+", "-", "*", "/", "**", "^", "√", "++", "--", "%", "mod", "//",
 COMPARTION_OPERATORS = ["==", "!=", ">", "<", "<=", ">="]
 INCREMENT_OPERATORS = ["+=", "-=", "*=", "/=", "**=", "//=", "++", "--"]
 LOGICAL_OPERATORS = ["&&", "||", "and", "or"]
+SPECIAL_OPERATORS = ["...", ".."]
 BOOLEAN = ["True", "False", "None", "NaN"]

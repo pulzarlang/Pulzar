@@ -22,3 +22,4 @@ Here is example of all static variable types::
     complex x = 3i + 5; \\ Complex number
     str name = "John"; \\ String
     char a = 'A'; \\ Character
+

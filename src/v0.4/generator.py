@@ -14,6 +14,8 @@ import sys
 isConsole = True
 plz_output = ""
 PORT = 8080
+PATH = ''
+file_name = ''
 @contextlib.contextmanager
 def stdoutIO(stdout=None):
     old = sys.stdout
@@ -24,6 +26,11 @@ def stdoutIO(stdout=None):
     sys.stdout = old
 
 def execute(code):
+    """
+    This function executes generated python code and returns the output
+    :param code:
+    :return output:
+    """
     with stdoutIO() as s:
         try:
             exec(code)
@@ -31,19 +38,21 @@ def execute(code):
             return "Error occured in your code"
     return s.getvalue()
 
-def exec_plz(code, isServer):
+def exec_plz(code, isServer, compile=False, execute=False):
+    print(execute)
     import lexer
     import mparser
+    isConsole = False
     lex = lexer.Lexer(code)
     tokens = lex.tokenize()
     parse = mparser.Parser(tokens, False)
     ast = parse.parse(tokens)
     if isServer:
-        gen = Generation(ast[0], ast[1]).generate_browser()
+        gen = Generation(ast[0], ast[1], False, file_name, execute).generate_browser()
     else:
-        gen = Generation(ast[0], ast[1]).generate()
-
-    return gen
+        gen = Generation(ast[0], ast[1], compile, file_name, execute).generate()
+        isConsole = True
+    return [gen, isConsole]
 
 #------------- PROGRAM BROWSER ----------
 class Serv(BaseHTTPRequestHandler):
@@ -59,32 +68,42 @@ class Serv(BaseHTTPRequestHandler):
     def do_GET(self):
         error = False
         plz = False
-        if self.path == '/':
-            try:
-                file_to_open = open('index.html')
-                self.path = '/index.html'
-            except:
-                self.path = '/index.plz'
+        if PATH == "":
+            if self.path == '/':
+                try:
+                    file_to_open = open('index.html')
+                    self.path = '/index.html'
+                except:
+                    self.path = '/index.plz'
 
-        elif self.path[-1:] == "/":
-            try:
-                file_to_open = open('index.html')
-                self.path += '/index.html'
-            except:
-                self.path += '/index.plz'
+            elif self.path[-1:] == "/":
+                try:
+                    file_to_open = open('index.html')
+                    self.path += '/index.html'
+                except:
+                    self.path += 'index.plz'
 
-        if self.path[-4:] == ".plz":
-            plz = True
+            if self.path[-4:] == ".plz":
+                plz = True
+        else:
+            file_to_open = open(file_name)
+            if self.path.replace('/', '') == PATH.replace('"', '').replace('/', '').replace("'", ""):
+                self.path = file_name
+                plz = True
 
-        elif "?" in self.path and ".plz" in self.path:
+        if "?" in self.path and ".plz" in self.path:
             from urllib.parse import urlparse, parse_qs
             parsed_url = urlparse(self.path)
             global get_requests
             get_requests = parse_qs(parsed_url.query)
             plz = True
             self.path = parsed_url.path
+
         try:
-            file_to_open = open(self.path[1:]).read()
+            if self.path[:1] in ["/", "\\"]:
+                file_to_open = open(self.path[1:]).read()
+            else:
+                file_to_open = open(self.path).read()
             self.send_response(200)
         except:
             file_to_open = "<!DOCTYPE html>\n"
@@ -99,20 +118,23 @@ class Serv(BaseHTTPRequestHandler):
         self.end_headers()
         if plz and error == False:
             gen_py = exec_plz(file_to_open, True)
-            pulzar_output = execute(gen_py)
-            output = '<!DOCTYPE html>\n'
-            output += "<html>\n"
-            output += "<head><title>Pulzar web</title></head>\n"
-            output += "<body>{}</body>\n".format(pulzar_output)
-            output += "</html>\n"
-            self.wfile.write(bytes(output, 'utf-8'))
+            print(gen_py[0])
+            if gen_py[1] == False:
+                pulzar_output = execute(gen_py[0])
+                output = '<!DOCTYPE html>\n'
+                output += "<html>\n"
+                output += "<head><title>Pulzar web</title></head>\n"
+                output += "<body>{}</body>\n".format(pulzar_output)
+                output += "</html>\n"
+                self.wfile.write(bytes(output, 'utf-8'))
+            else:
+                self.wfile.write(bytes(file_to_open, 'utf-8'))
         else:
             self.wfile.write(bytes(file_to_open, 'utf-8'))
 
     def do_POST(self):
         error = False
         plz = False
-
         if self.path == '/':
             try:
                 file_to_open = open('index.html')
@@ -167,10 +189,12 @@ class Serv(BaseHTTPRequestHandler):
 #--------------------------------------------------------------------------
 
 class Generation:
-    def __init__(self, source_ast, isConsole, compile=False):
+    def __init__(self, source_ast, isConsole, compile, filename, execute_plz=False):
         self.transpiled_code = ""
         self.isConsole = isConsole
         self.compile = compile
+        self.filename = filename
+        self.execute = execute_plz
 
         self.source_ast = source_ast['main_scope']
 
@@ -185,6 +209,8 @@ class Generation:
         from Obj.macrosObject import MacrosObject
         self.transpiled_code = "from Lib.browser.main import *\n"
         get_request, post_request = False, False
+        global file_name
+        file_name = self.filename
         for ast in self.source_ast:
 
             if self.check_ast('variable_declaration', ast):
@@ -224,6 +250,9 @@ class Generation:
                 elif x[0]['name'] == "GET":
                     get_request = True
                     self.transpiled_code += "GET(%s, get_requests)\n" % (x[1]['argument'])
+                elif x[0]['name'] == "set_path":
+                    global PATH
+                    PATH = '{}'.format(x[1]['argument'])
                 else:
                     self.transpiled_code += func.transpile() + "\n"
 
@@ -255,7 +284,6 @@ class Generation:
             from Obj.libObject import libObject
             from Obj.returnObject import ReturnObject
             from Obj.macrosObject import MacrosObject
-
             for ast in self.source_ast:
                 if self.check_ast('Include', ast):
                     inc = libObject(ast)
@@ -281,8 +309,8 @@ class Generation:
                     code = builtin.transpile()
                     if code[1] == True:
                         code[0] = "Program Console;\n" + code[0]
-                        gen = exec_plz(code[0].replace('"', ''), False)
-                        self.transpiled_code += gen + "\n"
+                        gen = exec_plz(code[0].replace('"', '').replace("'", ""), False)
+                        self.transpiled_code += gen[0] + "\n"
                     else:
                         self.transpiled_code += code[0] + "\n"
 
@@ -296,6 +324,7 @@ class Generation:
 
                 if self.check_ast('call_function', ast):
                     func = RunFuncObject(ast)
+
                     self.transpiled_code += func.transpile() + "\n"
 
                 if self.check_ast('return', ast):
@@ -315,13 +344,33 @@ class Generation:
 
         elif self.isConsole == False and self.compile == False:
             from Obj.functionObject import RunFuncObject
+            global file_name
+            file_name = self.filename
+            get_request, post_request = False, False
             for ast in self.source_ast:
                 if self.check_ast('call_function', ast):
                     func = RunFuncObject(ast)
                     x = ast['call_function']
-                    if x[0]['name'] == "set-port":
+                    if x[0]['name'] == "set_port":
                         global PORT
                         PORT = int(x[1]['argument'])
+                    elif x[0]['name'] == "POST":
+                        post_request = True
+                        self.transpiled_code += "POST(%s, post_requests)\n" % (x[1]['argument'])
+                    elif x[0]['name'] == "GET":
+                        get_request = True
+                        self.transpiled_code += "GET(%s, get_requests)\n" % (x[1]['argument'])
+                    elif x[0]['name'] == "set_path":
+                        global PATH
+                        PATH = '{}'.format(x[1]['argument'])
+                    else:
+                        self.transpiled_code += func.transpile() + "\n"
+
+            if post_request:
+                self.transpiled_code = "post_requests = {}\n{}".format(str(post_requests), self.transpiled_code)
+            elif get_request:
+                self.transpiled_code = "get_requests = {}\n{}".format(str(get_requests), self.transpiled_code)
+
             print(f"* Pulzar Server running at: localhost:{PORT}")
             httpd = HTTPServer(('localhost', PORT), Serv)
             httpd.serve_forever()
@@ -363,8 +412,9 @@ class Generation:
                     builtin = BuiltinObject(ast)
                     code = builtin.transpile()
                     if code[1] == True:
-                        gen = exec_plz(code[0], False)
-                        body += "\t" + gen + "\n"
+                        code[0] = "Program Console;\n" + code[0]
+                        gen = exec_plz(code[0].replace('"', '').replace("'", ''), False, True)
+                        body += "\t" + gen[0] + "\n"
                     else:
                         body += "\t" + code[0] + "\n"
 
@@ -379,9 +429,11 @@ class Generation:
                 if self.check_ast('return', ast):
                     return_ = ReturnObject(ast)
                     body += "\t" + return_.transpile() + "\n"
-
-            self.transpiled_code = "#include <iostream>\n" + header + functions
-            self.transpiled_code += "int main() {\n" + body + "}"
+            if self.execute == False:
+                self.transpiled_code = "#include <iostream>\n" + header + functions
+                self.transpiled_code += "int main() {\n" + body + "\treturn 0;\n}"
+            else:
+                self.transpiled_code = body
 
             return self.transpiled_code
 

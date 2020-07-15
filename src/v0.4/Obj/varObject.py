@@ -27,7 +27,7 @@ class VarObject(object):
                 #TODO multiple function calls in variable
                 self.exec_str += name + " = " + str(value[0]) + "(" + value[1] + ")"
         else:
-            print(value)
+
             self.exec_str += name + " = " + str(value).replace(':', '')
 
         return self.exec_str

@@ -51,8 +51,38 @@ class MathModule:
         pass
 
     def sort(self, array, algorithm="bubble_sort"):
-        if algorithm == bubble_sort:
-            pass
+        if algorithm == "bubble_sort":
+            n = len(array)
+            for i in range(n - 1):
+                for j in range(n - i - 1):
+                    if array[j] > array[j + 1]:
+                        array[j], array[j + 1] = array[j + 1], array[j]
+            return array
+        elif algorithm == "bogo_sort":
+            import random
+            # Sorts array a[0..n-1] using Bogo sort
+            def bogoSort(a):
+                n = len(a)
+                while (is_sorted(a) == False):
+                    a = shuffle(a)
+                return a
+            def is_sorted(a):
+                n = len(a)
+                for i in range(0, n - 1):
+                    if (a[i] > a[i + 1]):
+                        return False
+                return True
+
+            # To generate permuatation of the array
+            def shuffle(a):
+                n = len(a)
+                for i in range(0, n):
+                    r = random.randint(0, n - 1)
+                    a[i], a[r] = a[r], a[i]
+                return a
+
+            arr = bogoSort(array)
+            return arr
 
 
 class Complex(object):
@@ -107,6 +137,6 @@ class Complex(object):
             return n
 
         elif isinstance(power, int) and power == -2:
-            # n ^ -x = 1 / n ^ x
-            result = (Complex(self.real, self.imag) ** abs(power))
+            # n ^ (-x) = 1 / n ^ x
+            result = Complex(1.0, 0.0) / (Complex(self.real, self.imag) ** abs(power))
             return result

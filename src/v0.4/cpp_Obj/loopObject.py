@@ -10,6 +10,7 @@ class LoopObject:
         self.keyword = ""
 
     def transpile(self):
+        array = ""
         for ast in self.ast:
             try: self.keyword = ast['keyword']
             except: pass
@@ -22,7 +23,6 @@ class LoopObject:
 
             try: 
                 start_value = ast['start_value']
-                if start_value == None: start_value = "0"
             except: pass
 
             try: end_value = ast['end_value']
@@ -37,11 +37,24 @@ class LoopObject:
             try: condition = ast['condition']
             except: pass
 
+            try: data_type = ast['type']
+            except: pass
+
+            try: array = ast['array'].replace('[', '{').replace(']', '}')
+            except: pass
+
             try: scope = ast['scope']
             except: pass
 
         if str(self.keyword) == "for":
-            self.exec_str += "for ("+ name + "; " + name + " < " + end_value + "; " + increment + ") {\n" + self.transpile_scope(scope, self.nesting_count, 5) + "\t" * (self.nesting_count - 1) + "}" + "\n"
+            if array == "":
+                if start_value == None:
+                    self.exec_str += "for (int " + name + " = 0; " + name + " < " + end_value + "; " + increment + ") {\n" + self.transpile_scope(scope, self.nesting_count, 5) + "\t" * (self.nesting_count - 1) + "}" + "\n"
+                else:
+                    self.exec_str += "for ("+ name + "; " + name + " < " + end_value + "; " + increment + ") {\n" + self.transpile_scope(scope, self.nesting_count, 5) + "\t" * (self.nesting_count - 1) + "}" + "\n"
+            else:
+                #TODO find type of array
+                self.exec_str += "for (" + data_type + " " + name + " : " + array + ") {\n" + self.transpile_scope(scope, self.nesting_count, 5) + "\t" * (self.nesting_count - 1) + "}" + "\n"
 
         if str(self.keyword) == 'while':
             self.exec_str += "while (" + condition + ") {\n" + self.transpile_scope(scope, self.nesting_count, 2) + "\t" * (self.nesting_count - 1) + "}" + "\n"

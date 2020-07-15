@@ -34,25 +34,26 @@
             
   <div class="section" id="array">
 <h1>Array<a class="headerlink" href="#array" title="Permalink to this headline">¶</a></h1>
-<p>In pulzar you can define array like this:</p>
+<p>In pulzar you can create an array like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">array</span><span class="p">;</span>
 <span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">];</span>
 </pre></div>
 </div>
-<p>You can also loop through each element:</p>
+<p>The size of the array can be defined although it is optional:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">char</span> <span class="n">alphabet</span><span class="p">[</span><span class="mi">26</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="o">...</span> <span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>Printing all elements of an array is simple as that:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">];</span>
+<span class="n">echo</span> <span class="n">array</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>You can also loop through each element like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">];</span>
 <span class="nb">int</span> <span class="n">i</span><span class="p">;</span>
 <span class="k">for</span> <span class="n">i</span> <span class="p">::</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="p">::</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
     <span class="n">echo</span> <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
 <span class="p">}</span>
-</pre></div>
-</div>
-<p>Output:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span>
-<span class="mi">3</span>
-<span class="mi">5</span>
-<span class="mi">7</span>
-<span class="mi">9</span>
 </pre></div>
 </div>
 </div>

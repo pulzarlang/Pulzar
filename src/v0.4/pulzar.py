@@ -46,7 +46,7 @@ def main():
             ast = parse.parse(tokens)
             if ast[2] == True: # There was an error
                 quit()
-            obj = generator.Generation(ast[0], ast[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
+            obj = generator.Generation(ast[0], ast[1], False, sys.argv[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
             gen = obj.generate()
             exec(gen)
             return
@@ -68,16 +68,17 @@ def main():
         parse = mparser.Parser(tokens, True)
         ast = parse.parse(tokens)
         if ast[2] == True:  # There was an error
-            quit()
+            return
 
         print("Abstract Syntax Tree:")
         print(ast[0])
         print(17*"-" + "CODE GENERATION" + 18*"-")
-        obj = generator.Generation(ast[0], ast[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
+        obj = generator.Generation(ast[0], ast[1], False, sys.argv[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
         gen = obj.generate()
         print(gen)
         print("#"*21,"OUTPUT","#"*21)
         exec(gen)
+        return
 
     elif arguments_length > 2 and ("-c" in sys.argv or  "--compile" in sys.argv) and ("-t" not in sys.argv or "--tools" not in sys.argv):
         import subprocess
@@ -97,22 +98,27 @@ def main():
 
         parse = mparser.Parser(tokens, True)
         ast = parse.parse(tokens)
+        if ast[2] == True:
+            return
         print("Abstract Syntax Tree:")
         print(ast[0])
         print(17 * "-" + "CODE GENERATION" + 18 * "-")
-        obj = generator.Generation(ast[0], ast[1], True)  # 1 parameter: ast; 2 parameter: isConsole (True or False)
+        obj = generator.Generation(ast[0], ast[1], True, sys.argv[1])  # 1 parameter: ast; 2 parameter: isConsole (True or False)
         gen = obj.generate()
         print(gen)
         print("#" * 21, "OUTPUT", "#" * 21)
         f = open(sys.argv[1][:-4] + ".cpp", 'w')
         f.write(gen)
         f.close()
-        if subprocess.call(["g++", f"{sys.argv[1][:-4]}.cpp", "-o", f"{sys.argv[1][:-4]}"]) == 0:
+        if subprocess.call(["g++", f"{sys.argv[1][:-4]}.cpp", "-o", f"{sys.argv[1][:-4]}"]) == 0: #If there is no compilation error of generated c++ code
             if "-r" in sys.argv or "--run" in sys.argv:
                 PATH = os.getcwd()
                 filename = sys.argv[1][:-4].split('/')
                 os.chdir("".join([str(i) + "/" for i in filename[:-1]]))
-                subprocess.call([f"{filename[-1]}.exe"], shell=True)
+                if platform.system() == 'Windows':
+                    subprocess.call([f"{filename[-1]}.exe"], shell=True)
+                else:
+                    subprocess.call([f"{filename[-1]}.out"], shell=True)
                 os.system(f"cd {PATH}")
             else:
                 print("Compilation successful")

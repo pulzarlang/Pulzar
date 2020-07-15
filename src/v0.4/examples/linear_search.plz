@@ -1,0 +1,16 @@
+Program Console;
+func search : arr, n, match {
+    for i :: i < n :: i++ {
+        if arr[i] == match {
+            return i;
+        }
+    }
+}
+
+int n;
+var arr = [];
+input n;
+for i :: i < n :: i++ {
+    input arr[i];
+}
+echo search : arr,n, 5;

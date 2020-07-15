@@ -1,10 +1,11 @@
 Program Console;
 str command;
+echo "Welcome to Pulzar Command line:";
 while command != "exit" {
     print ">>>";
     input command;
     if command == "help" {
-        echo "help";
+        echo "This list includes all commands and their usage:";
     }
 
 }

@@ -2,5 +2,7 @@ Program Console;
 include math;
 int x = 0 - 2;
 complex a = 1i + 3;
-complex b = 5 + 13i;
+complex b = 5 - 3i;
 echo a * b;
+echo a / b;
+echo b ^ x;

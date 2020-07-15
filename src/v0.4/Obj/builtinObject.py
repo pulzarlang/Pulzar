@@ -10,6 +10,8 @@ class BuiltinObject(object):
         for ast in self.ast:
             try: func = ast['function']
             except: pass
+            try: type_ = ast['type']
+            except: pass
             try: arg = ast['argument']
             except: pass
 
@@ -20,7 +22,10 @@ class BuiltinObject(object):
             self.exec_str += "print(" + str(arg) + ", end='')"
 
         elif str(func) == 'input':
-            self.exec_str += "{} = input()".format (arg)
+            if type_ in ["var", None]:
+                self.exec_str += f"{arg} = input()"
+            else:
+                self.exec_str += f"{arg} = {type_}(input())"
 
         elif str(func) == 'system':
             self.exec_str += "os.system(" + str(arg) + ")"

@@ -1,0 +1,10 @@
+Program Console;
+char x = 'a' ... 'z';
+echo "English alphabet:";
+for a in x {
+    print a;
+}
+int nums = 1 ... 10;
+for i :: i < 10 :: i++ {
+    echo nums[i];
+}

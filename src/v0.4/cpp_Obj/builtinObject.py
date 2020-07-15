@@ -13,7 +13,10 @@ class BuiltinObject(object):
             try: arg = ast['argument']
             except: pass
         if str(func) == 'echo':
-            self.exec_str += "std::cout << " + str(arg).replace(',', ' << " " <<').replace(':', '') + r' << "\n";'
+            if '"' in str(arg) or "'" in str(arg):
+                self.exec_str += "std::cout << " + str(arg).replace(',', ' << " " <<') + r' << "\n";'
+            else:
+                self.exec_str += "std::cout << " + str(arg).replace(',', ' << " " <<').replace(':', '') + r' << "\n";'
 
         elif str(func) == 'print':
             self.exec_str += "std::cout <<" + str(arg).replace(',', ' << " " <<') + ";"
@@ -32,3 +35,4 @@ class BuiltinObject(object):
             self.execute = True
 
         return [self.exec_str, self.execute]
+

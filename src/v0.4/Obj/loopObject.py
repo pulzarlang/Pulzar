@@ -10,6 +10,7 @@ class LoopObject:
         self.keyword = ""
 
     def transpile(self):
+        name, condition, start_value, end_value, increment, array, scope = "", "", "", "", "", "", ""
         for ast in self.ast:
             try: self.keyword = ast['keyword']
             except: pass
@@ -34,11 +35,18 @@ class LoopObject:
             try: condition = ast['condition']
             except: pass
 
+            try: array = ast['array']
+            except: pass
+
             try: scope = ast['scope']
             except: pass
 
         if str(self.keyword) == "for":
-            self.exec_str += "for "+ name + " in range("+ str(start_value) + ", " + str(end_value) + ", " + str(increment) + "):\n"+ self.transpile_scope(scope, self.nesting_count, 5)
+            print(self.keyword, array)
+            if array == "":
+                self.exec_str += "for "+ name + " in range("+ str(start_value) + ", " + str(end_value) + ", " + str(increment) + "):\n"+ self.transpile_scope(scope, self.nesting_count, 5)
+            else:
+                self.exec_str += "for " + name + " in " + str(array) + ":\n" + self.transpile_scope(scope, self.nesting_count, 5)
 
         if str(self.keyword) == 'while':
             self.exec_str += "while " + condition + ":\n" + self.transpile_scope(scope, self.nesting_count, 2)
