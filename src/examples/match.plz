@@ -1,0 +1,9 @@
+Program Console;
+str a = 'e';
+match a {
+    'pi' -> echo 3.14159;
+    'e' -> echo 2.71828;
+    'g' -> echo 9.81;
+    'phi' -> echo 1.618;
+}
+echo "test";

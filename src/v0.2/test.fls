@@ -1,6 +1,0 @@
-Type Console;
-var name = "Brian Turza";
-var age = 13;
-echo name;
-echo age;
-system "pause";
