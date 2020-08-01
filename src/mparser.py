@@ -978,9 +978,11 @@ class Parser:
                 inner_tokens = [i[1] for i in tokens[0]]
                 if "in" in inner_tokens:
                     array = ""
+                    data_type = self.get_token_type(inner_tokens[3])
                     ast['loop'].append({'name': inner_tokens[1]})
-                    ast['loop'].append({'type': self.get_token_type(inner_tokens[3])})
+                    ast['loop'].append({'type': data_type})
                     ast['loop'].append({'array': ''.join(inner_tokens[3:])})
+                    self.symbol_table.append([data_type, inner_tokens[1], inner_tokens[3:]])
                 else:
                     if len([i for i, x in enumerate(inner_tokens) if x == "::"]) != 2:
                         self.error_message("SyntaxError:\nSymbol '::' is missing in a for loop", token_stream, tokens_checked)

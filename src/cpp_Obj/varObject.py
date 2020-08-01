@@ -18,7 +18,12 @@ class VarObject(object):
             except: pass
 
         if "[" in str(value) and "]" in str(value):
-            name = f"{name}[]"
+            if "[" in str(name) and "]" in str(name):
+                pass
+            elif str(value).count("[") == str(value).count("]") and str(value).count("[") > 1:
+                name = f"{name}[][]"
+            else:
+                name = f"{name}[]"
 
         value = str(value).replace('[', '{').replace(']', '}')
         if ":" in value:

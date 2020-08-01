@@ -39,7 +39,6 @@ def execute(code):
     return s.getvalue()
 
 def exec_plz(code, isServer, compile=False, execute=False):
-    print(execute)
     import lexer
     import mparser
     isConsole = False

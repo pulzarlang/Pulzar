@@ -23,3 +23,19 @@ Here is example of all static variable types::
     str name = "John"; \\ String
     char a = 'A'; \\ Character
 
+Operations with dynamic variables::
+
+    var x = 5;
+    echo x / 2; \\ output: 2.5
+    echo x / 7; \\ output: 0.7142857142857143
+    echo x ^ 2; \\ output: 25
+
+When the variables are declared dynamically, you can change their type, e. g. type : (x) = int, type : (x / 2) = float.
+
+Operations with static variables::
+
+    int a = 31;
+    echo xa / 3; \\ output: 10, not 10.333333...
+
+
+When you declare statically variable, however the values's type wont be changed, e. g. type : (a) = int, type : (a / 3) = int.

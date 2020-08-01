@@ -15,6 +15,7 @@ Guide
 .. toctree::
    :maxdepth: 2
 
+   index.rst
    license.rst
    getting-started.rst
    variables.rst
