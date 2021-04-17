@@ -4,6 +4,7 @@ import re
 import lexer
 import mparser
 import generator
+import constants
 result = '''
     ____        __                
    / __ \__  __/ /___  ____ ______ 
@@ -17,12 +18,14 @@ def shell():
     print(Fore.WHITE + "(c) Brian Turza 2018 - 20 Pulzar v0.4\n ")
     print(Fore.WHITE + "Welcome to \n")
     print(Fore.GREEN, result)
-    print(Fore.WHITE + "Type 'help' for more information")
+    print(Fore.WHITE + "Type 'help()' for more information")
     symbol_tree = ""
     stack = ""
     command = ""
     while command != "exit()" or  command != "quit()":
         command = input(">")
+
+        if command == "": continue
 
         if command in ["help", "help()"]:
             print("basic bulitin functions:")
@@ -48,15 +51,14 @@ def shell():
                 if error == False:
                     symbol_tree += command + "\n"
 
-            elif "func" and "{" in command:
+            elif "func" in command and "{" in command:
                 temp = ""
                 while temp != "}":
                     temp = input(" ")
                     command += "\n" + temp
                 stack += command + "\n"
 
-            elif "if" in command or "elseif" in command or "else" in command or "for" in command or "while":
-                print(command)
+            elif "if" in command or "elseif" in command or "else" in command or "for" in command or "while" in command:
                 temp = ""
                 while temp != "}":
                     temp = input(" ")
@@ -67,7 +69,6 @@ def shell():
                 # Parser
                 parse = mparser.Parser(tokens, False)
                 ast = parse.parse(tokens)
-                print(ast)
                 error = ast[2]
                 if error == False:
                     obj = generator.Generation(ast[0], ast[1])
@@ -80,6 +81,17 @@ def shell():
                         print(exc)
 
             else:
+                def checkExpression(command):
+                    math_sym = "0123456789" + "".join([operator for operator in constants.OPERATORS])
+                    for symbol in command.split():
+                        if symbol in constants.KEYWORDS or  symbol in constants.BUILT_IN:
+                            return False
+
+                        elif isinstance(symbol, str) or isinstance(symbol, list) or symbol in math_sym or symbol in constants.SPECIAL_OPERATORS:
+                            continue
+                    return True
+
+                if checkExpression(command): command = f"echo {command}"
                 code = "Program Console;\n" + symbol_tree + stack + command
                 # Lexer
                 lex = lexer.Lexer(code)
@@ -89,7 +101,7 @@ def shell():
                 ast = parse.parse(tokens)
                 error = ast[2]
                 if error == False:
-                    obj = generator.Generation(ast[0], ast[1])
+                    obj = generator.Generation(ast[0], ast[1], False, '')
                     gen = obj.generate()
                     try:
                         # mycode

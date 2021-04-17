@@ -58,6 +58,7 @@ class MathModule:
                     if array[j] > array[j + 1]:
                         array[j], array[j + 1] = array[j + 1], array[j]
             return array
+
         elif algorithm == "bogo_sort":
             import random
             # Sorts array a[0..n-1] using Bogo sort

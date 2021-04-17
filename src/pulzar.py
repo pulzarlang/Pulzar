@@ -14,10 +14,11 @@ import os
 import platform
 import sys
 from time import perf_counter
+__version__ = 0.4
 #Check Platform
 #If windows
 if platform.system() == "Windows":
-    os.system("title Pulzar v0.4")
+    os.system(f"title Pulzar v{__version__}")
 #If linux or mac os
 elif platform.system() == "linux" or platform.system() == "darwin":
     sys.stdout.write("\x1b]2;Pulzar v0.4\x07")
@@ -25,14 +26,18 @@ elif platform.system() == "linux" or platform.system() == "darwin":
 def main():
     arguments_length = len(sys.argv)
     if arguments_length == 1:
-        import shell
-        shell.shell()
+        import p_shell
+        p_shell.shell()
 
     arg = sys.argv
 
+    if arg[1] in ["--version", "-V"]:
+        print('Pulzar', __version__)
+        quit()
+    
     #If file doesnt have .plz file extension, it will raise an error
     if arg[1][-4:] != ".plz":
-        print("FileError at file '{}':\nMust be .plz file".format (sys.argv[1]))
+        print("FileError at file '{}':\nMust be .plz file".format (arg[1]))
         quit()
     # Looks for second argument
     elif arguments_length == 2:
@@ -46,13 +51,13 @@ def main():
             ast = parse.parse(tokens)
             if ast[2] == True: # There was an error
                 quit()
-            obj = generator.Generation(ast[0], ast[1], False, sys.argv[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
+            obj = generator.Generation(ast[0], ast[1], False, arg[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
             gen = obj.generate()
             exec(gen)
             return
 
-    elif arguments_length > 2 and sys.argv[arguments_length - 1] in ["-t", "--tools"]:
-        with open(sys.argv[1], "r", encoding="utf-8") as f:
+    elif arguments_length > 2 and arg[arguments_length - 1] in ["-t", "--tools"]:
+        with open(arg[1], "r", encoding="utf-8") as f:
             code = f.read()
         print("ORIGINAL CODE:")
         print(code)
@@ -73,7 +78,7 @@ def main():
         print("Abstract Syntax Tree:")
         print(ast[0])
         print(17*"-" + "CODE GENERATION" + 18*"-")
-        obj = generator.Generation(ast[0], ast[1], False, sys.argv[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
+        obj = generator.Generation(ast[0], ast[1], False, arg[1]) # 1 parameter: ast; 2 parameter: isConsole (True or False)
         gen = obj.generate()
         print(gen)
         print("#"*21,"OUTPUT","#"*21)
@@ -83,7 +88,7 @@ def main():
     elif arguments_length > 2 and ("-c" in sys.argv or  "--compile" in sys.argv) and ("-t" not in sys.argv or "--tools" not in sys.argv):
         import subprocess
 
-        with open(sys.argv[1], "r", encoding="utf-8") as f:
+        with open(arg[1], "r", encoding="utf-8") as f:
             code = f.read()
         print("ORIGINAL CODE:")
         print(code)
@@ -103,17 +108,17 @@ def main():
         print("Abstract Syntax Tree:")
         print(ast[0])
         print(17 * "-" + "CODE GENERATION" + 18 * "-")
-        obj = generator.Generation(ast[0], ast[1], True, sys.argv[1])  # 1 parameter: ast; 2 parameter: isConsole (True or False)
+        obj = generator.Generation(ast[0], ast[1], True, arg[1])  # 1 parameter: ast; 2 parameter: isConsole (True or False)
         gen = obj.generate()
         print(gen)
         print("#" * 21, "OUTPUT", "#" * 21)
-        f = open(sys.argv[1][:-4] + ".cpp", 'w')
+        f = open(arg[1][:-4] + ".cpp", 'w')
         f.write(gen)
         f.close()
-        if subprocess.call(["g++", f"{sys.argv[1][:-4]}.cpp", "-o", f"{sys.argv[1][:-4]}"]) == 0: #If there is no compilation error of generated c++ code
+        if subprocess.call(["g++", f"{arg[1][:-4]}.cpp", "-o", f"{arg[1][:-4]}"]) == 0: #If there is no compilation error of generated c++ code
             if "-r" in sys.argv or "--run" in sys.argv:
                 PATH = os.getcwd()
-                filename = sys.argv[1][:-4].split('/')
+                filename = arg[1][:-4].split('/')
                 os.chdir("".join([str(i) + "/" for i in filename[:-1]]))
                 if platform.system() == 'Windows':
                     subprocess.call([f"{filename[-1]}.exe"], shell=True)

@@ -1,4 +1,5 @@
 Program Console;
+
 str command;
 echo "Welcome to Pulzar Command line:";
 while command != "exit" {

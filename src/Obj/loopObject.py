@@ -42,7 +42,6 @@ class LoopObject:
             except: pass
 
         if str(self.keyword) == "for":
-            print(self.keyword, array)
             if array == "":
                 self.exec_str += "for "+ name + " in range("+ str(start_value) + ", " + str(end_value) + ", " + str(increment) + "):\n"+ self.transpile_scope(scope, self.nesting_count, 5)
             else:

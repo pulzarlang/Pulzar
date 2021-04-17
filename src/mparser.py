@@ -9,7 +9,6 @@ from Lib.math.main import *
 import numpy as np
 import re
 
-
 class Parser:
 
     def __init__(self, token_stream, include):
@@ -710,6 +709,7 @@ class Parser:
         value = ""
         ast = {'builtin_function': []}
         execute = False
+        dots = False
         for token in range(0, len(token_stream)):
 
             token_type = token_stream[tokens_checked][0]
@@ -747,6 +747,10 @@ class Parser:
                 else:
                     value = str(np.sqrt(float(token_value)))
 
+            elif token > 1 and token_type == "ELLIPSIS_OPERATOR":
+                value += str(token_value)
+                dots = True
+
             elif token > 1 and token_type == "FACTORIAL":
                 math = MathModule()
                 value += str(math.factorial(int(token_value)))
@@ -767,6 +771,9 @@ class Parser:
                 value += "constants['{}']".format(token_value)
 
             tokens_checked += 1
+
+        if dots:
+            value = str(self.get_tokens_range(value))
 
         if type(value) == int:
             value = int(value)
@@ -997,6 +1004,22 @@ class Parser:
 
                 tokens_checked += tokens[1]
                 break
+            elif keyword == "while":
+                if tokens_checked == 1: condition = token_value
+
+                elif tokens_checked == 2 and token_type != "FACTORIAL":
+                    condition += token_value
+
+                elif tokens_checked == 2 and token_type == "FACTORIAL":
+                    math = MathModule()
+                    condition = str(math.factorial(int(token_value)))
+
+                elif tokens_checked > 2 and token_type == "FACTORIAL":
+                    math = MathModule()
+                    condition += str(math.factorial(int(token_value)))
+
+                elif tokens_checked > 2 and token_type != "FACTORIAL":
+                    condition += token_value.replace("mod", "%")
 
             tokens_checked += 1
 

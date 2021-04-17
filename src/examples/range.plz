@@ -1,4 +1,5 @@
 Program Console;
+echo 1 ... 5;
 char x = 'a' ... 'z';
 echo "English alphabet:";
 for a in x {

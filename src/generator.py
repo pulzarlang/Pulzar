@@ -117,7 +117,7 @@ class Serv(BaseHTTPRequestHandler):
         self.end_headers()
         if plz and error == False:
             gen_py = exec_plz(file_to_open, True)
-            print(gen_py[0])
+            #print(gen_py[0])
             if gen_py[1] == False:
                 pulzar_output = execute(gen_py[0])
                 output = '<!DOCTYPE html>\n'

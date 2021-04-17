@@ -5,3 +5,4 @@ for x :: x < 10 :: x++ {
         echo x;
     }
 }
+echo 5 ... 12;
