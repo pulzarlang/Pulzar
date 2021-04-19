@@ -22,6 +22,12 @@ def shell():
     symbol_tree = ""
     stack = ""
     command = ""
+    def checkAssignment(command):
+        for token in command.split():
+            if token == "=":
+                return True
+        return False
+
     while command != "exit()" or  command != "quit()":
         command = input(">")
 
@@ -31,12 +37,15 @@ def shell():
             print("basic bulitin functions:")
             print("echo - prints value or text with new line")
             print("print - To print value or text without new line")
-            print("system - eqivalent to os.system from python")
+            print("system - equivalent to os.system from python")
             print("----------------------------------------------")
             print("list of keywords:")
             print("if\nelseif\nelse\nfor\nwhile\nfunc\nclass\n")
             print("Exit screen by commands exit or exit()")
             print("for more open https://docs.pulzar.org")
+
+        elif command == "symbol_tree()":
+            print(symbol_tree)
             
         elif command == "exit" or command == "exit()" or command == "quit()":
             quit()
@@ -50,6 +59,8 @@ def shell():
                 error = ast[2]
                 if error == False:
                     symbol_tree += command + "\n"
+            elif checkAssignment(command) == True:
+                symbol_tree += command + "\n"
 
             elif "func" in command and "{" in command:
                 temp = ""
@@ -71,12 +82,13 @@ def shell():
                 ast = parse.parse(tokens)
                 error = ast[2]
                 if error == False:
-                    obj = generator.Generation(ast[0], ast[1])
+                    obj = generator.Generation(ast[0], ast[1], False, '')
                     gen = obj.generate()
                     try:
                         # mycode
                         exec(gen)
                     except Exception as exc:
+                        print(gen)
                         print("Error at line 1:")
                         print(exc)
 
@@ -84,7 +96,7 @@ def shell():
                 def checkExpression(command):
                     math_sym = "0123456789" + "".join([operator for operator in constants.OPERATORS])
                     for symbol in command.split():
-                        if symbol in constants.KEYWORDS or  symbol in constants.BUILT_IN:
+                        if symbol in constants.KEYWORDS or symbol in constants.BUILT_IN or symbol == "=":
                             return False
 
                         elif isinstance(symbol, str) or isinstance(symbol, list) or symbol in math_sym or symbol in constants.SPECIAL_OPERATORS:

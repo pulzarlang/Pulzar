@@ -1,7 +1,8 @@
 Program Browser;
 set_port : 8080;
 var data = [ 'c', 'c++', 'python', 'pulzar' ];
-value = GET : 'query';
+var value = GET : 'query';
+echo "Favorite programming language:" + value;
 int i;
 for i :: i < 4 :: i++ {
     if data[i] == value {

@@ -10,12 +10,15 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from io import StringIO
 import contextlib
 import sys
+from colorama import *
+
 
 isConsole = True
 plz_output = ""
 PORT = 8080
 PATH = ''
 file_name = ''
+get_requests, post_requests = '{}', '"{}'
 @contextlib.contextmanager
 def stdoutIO(stdout=None):
     old = sys.stdout
@@ -34,7 +37,7 @@ def execute(code):
     with stdoutIO() as s:
         try:
             exec(code)
-        except:
+        except Exception as exc:
             return "Error occured in your code"
     return s.getvalue()
 
@@ -89,14 +92,16 @@ class Serv(BaseHTTPRequestHandler):
             if self.path.replace('/', '') == PATH.replace('"', '').replace('/', '').replace("'", ""):
                 self.path = file_name
                 plz = True
-
-        if "?" in self.path and ".plz" in self.path:
+        if "?" in self.path and ".plz" in self.path or "?" in self.path and "/" in self.path:
             from urllib.parse import urlparse, parse_qs
             parsed_url = urlparse(self.path)
             global get_requests
             get_requests = parse_qs(parsed_url.query)
             plz = True
-            self.path = parsed_url.path
+            if parsed_url.path == "/":
+                self.path = file_name
+            else:
+                self.path = parsed_url.path
 
         try:
             if self.path[:1] in ["/", "\\"]:
@@ -211,8 +216,12 @@ class Generation:
         global file_name
         file_name = self.filename
         for ast in self.source_ast:
-
             if self.check_ast('variable_declaration', ast):
+                x = ast['variable_declaration']
+                if "GET" in x[2]['value'] and ":" in x[2]['value']:
+                    get_request = True
+                elif "POST" in x[2]['value'] and ":" in x[2]['value']:
+                    post_request = True
                 var = VarObject(ast)
                 self.transpiled_code += var.transpile() + "\n"
 
@@ -263,10 +272,8 @@ class Generation:
             self.transpiled_code = "post_requests = {}\n{}".format(str(post_requests), self.transpiled_code)
         elif get_request:
             self.transpiled_code = "get_requests = {}\n{}".format(str(get_requests), self.transpiled_code)
-
         global plz_output
         plz_output = execute(self.transpiled_code)
-
         return self.transpiled_code
 
 
@@ -370,7 +377,36 @@ class Generation:
             elif get_request:
                 self.transpiled_code = "get_requests = {}\n{}".format(str(get_requests), self.transpiled_code)
 
+            pulzar_ascii = '''
+     ____        __                
+    / __ \__  __/ /___  ____ ______ 
+   / /_/ / / / / /_  / / __ `/ ___/
+  / ____/ /_/ / / / /_/ /_/ / /    
+ /_/    \__,_/_/ /___/\__,_/_/     
+ '''
+            webserver_ascii = """
+  __        __   _                                  
+  \ \      / /__| |__  ___  ___ _ ____   _____ _ __ 
+   \ \ /\ / / _ \ '_ \/ __|/ _ \ '__\ \ / / _ \ '__|
+    \ V  V /  __/ |_) \__ \  __/ |   \ V /  __/ |   
+     \_/\_/ \___|_.__/|___/\___|_|    \_/ \___|_|      
+ """
+            from pyfiglet import figlet_format
+            def combineStr(str1, str2):
+                l1 = str1.split('\n')
+                l2 = str2.split('\n')
+                print()
+                for i in range(min(len(l1), len(l2))):
+                    if i > 0 and i != len(l2) - 1:
+                        init(convert=True)
+                        print(Fore.GREEN, l1[i] + '\t', end="")
+                        print(Fore.WHITE, "| |", end="")
+                        print(Fore.YELLOW, l2[i])
+                print(Fore.WHITE + "\n")
+
+            combineStr(pulzar_ascii, webserver_ascii)
             print(f"* Pulzar Server running at: localhost:{PORT}")
+            print("Press CTRL-C, if you want to stop this server")
             httpd = HTTPServer(('localhost', PORT), Serv)
             httpd.serve_forever()
 
